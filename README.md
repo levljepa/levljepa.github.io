@@ -1,12 +1,12 @@
-# LeWorldModel
+# LeVLJEPA
 
-This is the repository that contains source code for the [LeWorldModel website](https://le-wm.github.io).
+This is the repository that contains source code for the [LeVLJEPA website](https://levljepa.github.io).
 
-If you find LeWorldModel useful for your work please cite:
+If you find LeVLJEPA useful for your work please cite:
 ```
-@article{leworldmodel2026,
-  author    = {Maes, Lucas and Le Lidec, Quentin and Scieur, Damien and LeCun, Yann and Balestriero, Randall},
-  title     = {LeWorldModel: Stable End-to-End Joint-Embedding Predictive Architecture from Pixels},
-  year      = {2026},
+@article{levljepa2026,
+  title  = {LeVLJEPA: End-to-End Vision-Language Pretraining Without Contrastive Negatives},
+  author = {Kuhn, Lukas and Serra, Giuseppe and Balestriero, Randall and Buettner, Florian},
+  year   = {2026},
 }
 ```
