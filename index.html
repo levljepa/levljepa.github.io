@@ -59,20 +59,20 @@
               <a href="https://lukas-kuhn.github.io">Lukas Kuhn</a><sup>1,2,3</sup>,
             </span>
             <span class="author-block">
-              Giuseppe Serra<sup>1,3</sup>,
+              <a href="https://mlo-lab.github.io/author/giuseppe-serra/">Giuseppe Serra</a><sup>1,2</sup>,
             </span>
             <span class="author-block">
               <a href="https://randallbalestriero.github.io">Randall Balestriero</a><sup>4</sup>,
             </span>
             <span class="author-block">
-              Florian Buettner<sup>1,2,3</sup>
+              <a href="https://mlo-lab.github.io/author/florian-buettner/">Florian Buettner</a><sup>1,2,3</sup>
             </span>
           </div>
 
           <div class="is-size-6 publication-authors" style="margin-top: 0.5rem;">
-            <span class="author-block"><sup>1</sup>DKFZ Heidelberg,</span>
-            <span class="author-block"><sup>2</sup>Goethe University Frankfurt,</span>
-            <span class="author-block"><sup>3</sup>German Cancer Consortium (DKTK),</span>
+            <span class="author-block"><sup>1</sup>German Cancer Research Center (DKFZ),</span>
+            <span class="author-block"><sup>2</sup>German Cancer Consortium (DKTK),</span>
+            <span class="author-block"><sup>3</sup>Goethe University Frankfurt,</span>
             <span class="author-block"><sup>4</sup>Brown University</span>
           </div>
 
@@ -132,12 +132,12 @@
           <div class="content has-text-justified">
             <p>
               Vision-language pretraining remains dominated by contrastive objectives, while vision-only
-              self-supervised learning has largely moved toward non-contrastive methods. In this work,
-              we investigate whether strong vision-language representations can instead be learned
-              end-to-end without contrastive negatives. We introduce <strong>LeVLJEPA</strong>, the first
-              fully non-contrastive end-to-end vision-language pretraining method, based on cross-modal
-              prediction with stop-gradient targets and per-modality distributional regularization.
-              LeVLJEPA trains stably and remains competitive with CLIP and SigLIP on zero-shot
+              self-supervised learning has largely moved toward non-contrastive methods.
+              In this work, we investigate how strong vision-language representations can instead be
+              learned end-to-end without contrastive negatives. We first introduce <strong>LeVLJEPA</strong>,
+              the first fully non-contrastive end-to-end vision-language pretraining method. LeVLJEPA is
+              based on cross-modal prediction with stop-gradient targets and per-modality distributional
+              regularization; it trains stably and remains competitive with CLIP and SigLIP on zero-shot
               classification and linear probing at moderate batch sizes.
             </p>
             <p>
@@ -146,9 +146,11 @@
               caption supervision under-specifies their distinguishing details — and show it is shared
               across both contrastive and non-contrastive objectives. To mitigate it, we introduce
               <strong>LeVLJEPA+</strong>, which adds visual multi-view prediction to recover stronger
-              fine-grained and spatial structure. LeVLJEPA+ matches strong contrastive baselines on
-              linear probing while outperforming them on dense prediction, background robustness, and
-              fine-grained transfer.
+              fine-grained and spatial structure.
+              LeVLJEPA+ matches strong contrastive baselines on linear probing across all batch sizes
+              while outperforming them on dense prediction, background robustness, and fine-grained
+              transfer. These results demonstrate that non-contrastive vision-language pretraining can
+              yield strong, spatially structured vision features without contrastive negatives.
             </p>
           </div>
         </div>
