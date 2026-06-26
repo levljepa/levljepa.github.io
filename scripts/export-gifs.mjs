@@ -111,7 +111,8 @@ async function createExportPage() {
       max-width:1500px !important;
     }
     html.gif-export #overviewDemo,
-    html.gif-export #sigregDemo {
+    html.gif-export #sigregDemo,
+    html.gif-export #vlmBridgeDemo {
       box-sizing:border-box !important;
       width:${SOCIAL_WIDTH}px !important;
       max-width:${SOCIAL_WIDTH}px !important;
@@ -411,7 +412,7 @@ async function prepareExportLayout(cdp) {
         width: ${SOCIAL_WIDTH}px !important;
         max-width: ${SOCIAL_WIDTH}px !important;
       }
-      #overviewDemo, #sigregDemo {
+      #overviewDemo, #sigregDemo, #vlmBridgeDemo {
         width: ${SOCIAL_WIDTH}px !important;
         max-width: ${SOCIAL_WIDTH}px !important;
         padding: 0 70px 42px !important;
@@ -449,6 +450,11 @@ async function scrubDiagram(cdp, u) {
 
 async function scrubSigreg(cdp, u) {
   await evalInPage(cdp, `window.__levljepaExport.renderSigreg(${u})`);
+  await waitForPaint(cdp);
+}
+
+async function scrubTransfer(cdp, u) {
+  await evalInPage(cdp, `window.__levljepaExport.renderTransfer(${u})`);
   await waitForPaint(cdp);
 }
 
@@ -640,6 +646,15 @@ async function main() {
       width: SOCIAL_WIDTH,
       scrub: scrubSigreg,
       mapPhase: continuousRange(0, 1),
+    }));
+    outputs.push(...await exportAnimation(cdp, {
+      name: "levljepa-mlp-bridge",
+      selector: "#vlmBridgeDemo",
+      fps: 30,
+      seconds: 14,
+      width: SOCIAL_WIDTH,
+      scrub: scrubTransfer,
+      mapPhase: continuousRange(0.04, 0.96),
     }));
     outputs.push(...await exportSocialCharts());
 
