@@ -1,63 +1,1328 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="description"
         content="LeVLJEPA: the first fully non-contrastive end-to-end vision-language pretraining method.">
   <meta name="keywords" content="LeVLJEPA, vision-language, non-contrastive, JEPA, SIGReg, pretraining">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LeVLJEPA — Coming Soon</title>
+  <title>LeVLJEPA: End-to-End Vision-Language Pretraining Without Negatives</title>
 
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/computer-modern/cmu-serif.css">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+  </script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #ffffff;
-      color: #1a1a1a;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    html, body { overflow-x: hidden; }
+
+    .figure-caption {
+      font-family: 'CMU Serif', Georgia, serif;
+      font-size: 0.88rem; color: #555; margin-top: 0.85rem; line-height: 1.55;
     }
-    .wrap {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      box-sizing: border-box;
+    .figure-caption b, .figure-caption strong { color: #222; }
+    .section-divider { border: none; border-top: 1px solid #eee; margin: 0; }
+
+    /* ---- interactive figure shell (flat / clean) ---- */
+    .demo-card {
+      background: transparent;
+      padding: 18px 0 12px;
     }
-    .title {
-      font-size: clamp(2.5rem, 8vw, 4.5rem);
-      font-weight: 700;
-      margin: 0;
-      letter-spacing: -0.02em;
+    .demo-head {
+      display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+      margin: 0 2px 4px; flex-wrap: wrap;
     }
-    .subtitle {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-      color: #666;
-      margin-top: 1.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
+    .demo-kicker {
+      font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.22em;
+      text-transform:uppercase; color:#9aa3ab;
     }
-    .desc {
-      max-width: 32rem;
-      margin-top: 1.5rem;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: #444;
+    .demo-title { font-family:'Inter', sans-serif; font-weight:600; font-size:0.98rem; color:#333; }
+
+    #diagram, #sigreg, #vlmBridge { display:block; width:100%; height:auto; }
+
+    /* svg text classes (robust font assignment) */
+    .t-box   { font-family:'Inter', sans-serif; font-weight:600; }
+    .t-mono  { font-family:'IBM Plex Mono', monospace; }
+    .t-math  { font-family:'CMU Serif', Georgia, serif; font-style:italic; }
+    .t-cap   { font-family:'CMU Serif', Georgia, serif; }
+
+    /* ---- controls ---- */
+    .controls { display:flex; align-items:center; gap:12px; margin:10px 2px 2px; flex-wrap:wrap; }
+    .cbtn {
+      font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.05em;
+      text-transform:uppercase; border:1px solid #ddd; background:#fff; color:#555;
+      border-radius:6px; padding:6px 12px; cursor:pointer; transition:all .15s ease;
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .cbtn:hover { border-color:#bbb; color:#222; background:#fafafa; }
+    .stage {
+      font-family:'IBM Plex Mono', monospace; font-size:12px; color:#555;
+      flex:1 1 230px; min-width:190px;
+    }
+    .stage b { color:#226999; font-weight:600; }
+    .track { flex:1 1 100%; height:3px; border-radius:3px; background:#ececec; position:relative; cursor:pointer; margin-top:2px; }
+    .track-fill { position:absolute; left:0; top:0; bottom:0; border-radius:3px; background:#226999; width:0%; }
+    .track-dot { position:absolute; top:50%; width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%; background:#fff; border:1.5px solid #bbb; }
+
+    .sig-controls { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin:12px 2px 2px; }
+    .slider-wrap { flex:1 1 430px; display:flex; flex-direction:column; gap:7px; min-width:230px; }
+    .slider-scale {
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em;
+      text-transform:uppercase; color:#9aa3ab;
+    }
+    .slider-scale span:last-child { color:#ed5b52; text-align:right; }
+    input[type=range] {
+      -webkit-appearance:none; appearance:none; height:3px; border-radius:3px; flex:1; cursor:pointer;
+      background:linear-gradient(90deg,#ed5b52 var(--p,0%),#ececec var(--p,0%));
+    }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:#fff; border:2px solid #ed5b52; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+    input[type=range]::-moz-range-thumb { width:15px; height:15px; border-radius:50%; background:#fff; border:2px solid #ed5b52; cursor:pointer; }
+
+    .results-section { padding-top: 2.2rem; }
+    .results-section .container { max-width: 1080px !important; }
+    .results-head { max-width: 900px; margin: 0 auto 1.8rem; }
+    .results-head h2 {
+      font-family:'CMU Serif', Georgia, serif; font-weight:700; font-size:2rem;
+      color:#222; margin-bottom:0.7rem; text-align:center;
+    }
+    .results-head p {
+      color:#333; font-size:1rem; line-height:1.65; text-align:justify;
+    }
+    .result-block { margin:2.2rem auto 0; max-width:1040px; }
+    .result-block h3 {
+      font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.22em;
+      text-transform:uppercase; color:#9aa3ab; margin-bottom:0.7rem;
+    }
+    .result-copy {
+      border-left:2px solid #e7edf2; padding-left:1rem; margin:0.9rem 0 1.1rem;
+      max-width:900px;
+    }
+    .result-copy h4 {
+      font-family:'Inter', sans-serif; font-size:0.98rem; font-weight:650;
+      color:#222; margin-bottom:0.45rem;
+    }
+    .result-copy p {
+      color:#333; font-size:0.96rem; line-height:1.65; margin:0 0 0.7rem;
+    }
+    .result-copy p:last-child { margin-bottom:0; }
+    .result-layout {
+      display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap:1.4rem; align-items:start;
+    }
+    .result-layout .result-copy { margin:0; }
+    .result-note { color:#444; font-size:0.95rem; line-height:1.6; margin:0.75rem 0 0; }
+    .chart-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:1.3rem; }
+    .chart-card {
+      border:1px solid #ececec; border-radius:8px; background:#fff;
+      padding:1rem 1rem 0.9rem;
+    }
+    .chart-card h4 {
+      font-family:'Inter', sans-serif; font-size:0.96rem; font-weight:600;
+      color:#222; margin-bottom:0.8rem;
+    }
+    .chart-legend { display:flex; flex-wrap:wrap; gap:0.7rem 1rem; margin-bottom:0.85rem; }
+    .legend-item {
+      display:inline-flex; align-items:center; gap:0.35rem;
+      font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.08em;
+      text-transform:uppercase; color:#777;
+    }
+    .swatch { width:10px; height:10px; border-radius:2px; background:var(--c); }
+    .bar-group { display:grid; gap:0.82rem; }
+    .bar-row { display:grid; grid-template-columns:92px 1fr; gap:0.8rem; align-items:center; }
+    .bar-label {
+      font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.08em;
+      text-transform:uppercase; color:#777;
+    }
+    .bar-stack { display:grid; gap:0.22rem; }
+    .bar {
+      display:grid; grid-template-columns:70px minmax(0, 1fr) 42px; gap:0.45rem; align-items:center;
+      font-family:'Inter', sans-serif; font-size:0.76rem; color:#555;
+    }
+    .bar-name { white-space:nowrap; }
+    .bar-track { min-width:0; height:10px; border-radius:999px; background:#f0f2f4; overflow:hidden; }
+    .bar-fill {
+      display:block; width:var(--w); height:100%; border-radius:999px; background:var(--c);
+    }
+    .bar-value { font-family:'IBM Plex Mono', monospace; font-size:10px; color:#333; text-align:right; }
+    .bar.lev .bar-name, .bar.lev .bar-value { font-weight:700; color:#1e3647; }
+    .delta-chart .bar { grid-template-columns:78px 1fr 44px; }
+    .abstract-section { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+    .abstract-section .container { max-width: 1040px !important; }
+    .abstract-section .abstract-box { max-width: 960px; }
+    .publication-links .paper-button {
+      background:#b31b1b;
+      border-color:#941616;
+      color:#fff;
+      box-shadow:0 8px 20px rgba(179,27,27,.15);
+    }
+    .publication-links .paper-button:hover,
+    .publication-links .paper-button:focus {
+      background:#941616;
+      border-color:#761111;
+      color:#fff;
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(179,27,27,.22);
+    }
+    .publication-links .github-button {
+      background:#24292f;
+      border-color:#1f2328;
+      color:#fff;
+      box-shadow:0 8px 20px rgba(36,41,47,.14);
+    }
+    .publication-links .github-button:hover,
+    .publication-links .github-button:focus {
+      background:#1f2328;
+      border-color:#1b1f24;
+      color:#fff;
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(36,41,47,.21);
+    }
+    .publication-links .checkpoint-button {
+      background:#226999;
+      border-color:#185579;
+      color:#fff;
+      box-shadow:0 8px 20px rgba(34,105,153,.18);
+    }
+    .publication-links .checkpoint-button:hover,
+    .publication-links .checkpoint-button:focus {
+      background:#185579;
+      border-color:#123f5b;
+      color:#fff;
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(34,105,153,.24);
+    }
+    .publication-links .checkpoint-button .icon {
+      color:#f6d88a;
+    }
+    .publication-links .checkpoint-button .hf-logo {
+      display:block;
+      width:1.25em;
+      height:1.25em;
+      object-fit:contain;
+    }
+    @media (max-width: 768px) {
+      .chart-grid, .result-layout { grid-template-columns:1fr; }
+      .result-copy { margin-top:0.95rem; }
+      .results-head p { text-align:left; }
+      .results-section { padding-left:0; padding-right:0; }
+      .results-section .container {
+        width:100vw !important; max-width:100vw !important;
+        margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+        padding-left:1.5rem; padding-right:1.5rem;
+      }
+      .chart-card { padding:0.9rem 0.85rem; }
+      .bar-row { grid-template-columns:1fr; gap:0.35rem; }
+      .bar, .delta-chart .bar { display:flex; flex-wrap:wrap; align-items:center; gap:0.18rem 0.45rem; }
+      .bar-name { order:1; display:inline-block; min-width:4.6rem; }
+      .bar-value { order:2; display:inline-block; margin-left:0; text-align:left; }
+      .bar-track { order:3; display:block; flex:1 0 100%; width:100%; margin-top:0.05rem; }
+      .hero .hero-body { padding-left: 1rem; padding-right: 1rem; }
+      .publication-title { overflow-wrap: anywhere; }
+      .title.is-1 { font-size: 2.6rem; }
+      .title.is-2 { font-size: 1.85rem; }
+      .publication-links {
+        display:flex; justify-content:center; flex-wrap:wrap; gap:0.35rem;
+      }
+      .abstract-section .column { padding-left: 0; padding-right: 0; }
+      .abstract-section .abstract-box { padding: 1.5rem 1.2rem; }
+      .figure-caption { text-align:left; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1 class="title">LeVLJEPA</h1>
-    <p class="subtitle">Coming Soon</p>
-    <p class="desc">We're updating this page. Please check back shortly.</p>
+
+<!-- ===== HERO / TITLE ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+
+          <h1 class="title is-1 publication-title"><strong>LeVLJEPA</strong>:</h1>
+          <h2 class="title is-2 publication-title">End-to-End Vision-Language Pretraining<br>Without Negatives</h2>
+
+          <div class="is-size-5 publication-authors" style="margin-top: 1rem;">
+            <span class="author-block"><a href="https://lukas-kuhn.github.io">Lukas Kuhn</a><sup>1,2</sup>,</span>
+            <span class="author-block"><a href="https://mlo-lab.github.io/author/giuseppe-serra/">Giuseppe Serra</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://randallbalestriero.github.io">Randall Balestriero</a><sup>*,4</sup>,</span>
+            <span class="author-block"><a href="https://mlo-lab.github.io/author/florian-buettner/">Florian Buettner</a><sup>*,1,2,3</sup></span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top: 0.5rem;">
+            <span class="author-block"><sup>1</sup>German Cancer Research Center (DKFZ),</span>
+            <span class="author-block"><sup>2</sup>German Cancer Consortium (DKTK),</span>
+            <span class="author-block"><sup>3</sup>Goethe University Frankfurt,</span>
+            <span class="author-block"><sup>4</sup>Brown University</span>
+            <span class="author-block" style="margin-top: 0.25rem; display:block;"><sup>*</sup>Joint last author</span>
+          </div>
+
+          <div class="column has-text-centered" style="margin-top: 1rem;">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded paper-button">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span><span>Paper</span></a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/lukas-kuhn/LeVLJEPA" class="external-link button is-normal is-rounded github-button">
+                  <span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a>
+              </span>
+              <span class="link-block">
+                <a href="https://huggingface.co/collections/Machine-Learning-Oncology/levljepa" class="external-link button is-normal is-rounded checkpoint-button">
+                  <span class="icon">
+                    <img class="hf-logo" src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg" alt="" aria-hidden="true">
+                  </span><span>Checkpoints</span></a>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
   </div>
+</section>
+
+<!-- ===== ABSTRACT ===== -->
+<section class="section abstract-section">
+  <div class="container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <div class="abstract-box">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Vision-language pretraining remains dominated by contrastive objectives, whereas vision-only
+              self-supervised learning has largely adopted non-contrastive methods. At the same time, the role
+              of vision-language encoders has shifted: they are increasingly deployed not as zero-shot
+              classifiers but as the frozen visual backbone of vision-language models and dense prediction
+              systems, which consume the full grid of patch tokens rather than a single pooled embedding.
+              We introduce <strong>LeVLJEPA</strong>, the first fully non-contrastive end-to-end
+              vision-language pretraining method. LeVLJEPA learns through cross-modal prediction with
+              stop-gradient targets and per-modality distributional regularization, without negatives,
+              temperature, momentum encoder, or teacher-student schedule, and trains stably at large scale.
+            </p>
+            <p>
+              Our central finding is that non-contrastive pretraining yields a vision encoder with
+              substantially stronger dense semantic features than contrastive pretraining: as a frozen
+              vision-language-model backbone, LeVLJEPA is the strongest of the evaluated encoders across GQA,
+              VQAv2, and POPE under two distinct language models, and it outperforms contrastive baselines on
+              semantic segmentation, while remaining on par on global readouts such as linear probing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INTERACTIVE OVERVIEW ===== -->
+<section class="section" style="padding-top: 1rem; padding-bottom: 1rem;">
+  <div class="container is-max-desktop">
+    <div class="result-copy">
+      <h4>Cross-modal prediction replaces contrastive discrimination</h4>
+      <p>
+        LeVLJEPA learns image-text alignment through matched-pair prediction: image embeddings predict
+        stop-gradient text embeddings, and text embeddings predict stop-gradient image embeddings through
+        modality-specific predictors.
+      </p>
+      <p>
+        The stopped targets are the central asymmetry. Each encoder receives gradients only from its own branch,
+        while the predictors absorb the residual mismatch between image content and caption content instead of
+        forcing both encoders into the same under-specified shared space.
+      </p>
+    </div>
+
+    <div class="demo-card" id="overviewDemo">
+      <div class="demo-head">
+        <span class="demo-kicker">How LeVLJEPA learns</span>
+      </div>
+
+      <svg id="diagram" viewBox="0 0 860 600" role="img"
+           aria-label="Animated LeVLJEPA forward pass: image and text flow into encoders, produce embeddings, cross-modal predictors, MSE alignment, and SIGReg."></svg>
+
+      <div class="controls">
+        <span class="stage">Step <b id="stageNum">1</b> · <span id="stageTxt">Encode each modality</span></span>
+        <div class="track" id="track" aria-hidden="true">
+          <div class="track-fill" id="trackFill"></div>
+          <div id="trackDots"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="figure-caption has-text-centered">
+      <b>LeVLJEPA overview.</b> Image \(X_V\) and caption \(X_T\) are encoded into pre-projected embeddings
+      \(Z_V, Z_T\), then passed through modality-specific predictors to produce cross-modal predictions
+      \(\hat{Z}_V, \hat{Z}_T\). The objective combines (i) a cross-modal MSE against a <b>stop-gradient</b>
+      target from the other modality and (ii) <b>SIGReg</b> applied independently to \(Z_V\) and \(Z_T\) —
+      no negatives, temperature, momentum encoder, or teacher–student schedule.
+    </p>
+  </div>
+</section>
+
+<!-- ===== SIGReg PANEL ===== -->
+<section class="section" style="padding-top: 0.5rem;">
+  <div class="container is-max-desktop">
+    <div class="result-copy">
+      <h4>SIGReg supplies the anti-collapse signal</h4>
+      <p>
+        To prevent collapse, each modality is regularized independently so its marginal embedding distribution
+        stays close to an isotropic Gaussian. This gives LeVLJEPA an explicit anti-collapse objective without
+        negatives, temperature scaling, a momentum encoder, or a teacher network.
+      </p>
+      <p>
+        Rather than matching a full density in \(d\) dimensions, SIGReg samples random one-dimensional
+        projections and applies a characteristic-function normality test to each projection, yielding linear
+        time and memory complexity in batch size and embedding dimension.
+      </p>
+    </div>
+
+    <div class="demo-card" id="sigregDemo">
+      <div class="demo-head">
+        <span class="demo-kicker">SIGReg — drag toward isotropy</span>
+      </div>
+
+      <svg id="sigreg" viewBox="0 0 860 340" role="img"
+           aria-label="Interactive SIGReg: a latent point cloud regularized toward an isotropic Gaussian, with normality tests along random univariate projections."></svg>
+
+      <div class="sig-controls">
+        <div class="slider-wrap">
+          <div class="slider-scale" aria-hidden="true">
+            <span>Raw embeddings</span>
+            <span>Isotropic Gaussian</span>
+          </div>
+          <input type="range" id="sigSlider" min="0" max="100" value="0"
+                 aria-label="SIGReg strength from raw embeddings to isotropic Gaussian">
+        </div>
+        <button class="cbtn" id="sigAuto">▶ Auto</button>
+        <button class="cbtn" id="sigResample">↻ Resample</button>
+      </div>
+    </div>
+
+    <p class="figure-caption has-text-centered">
+      SIGReg never matches a density in \(d\) dimensions directly. It projects the embeddings onto random
+      univariate directions (colored arrows) and applies a characteristic-function normality test
+      (Epps–Pulley) to each 1-D projection, pushing every marginal toward the standard Gaussian (navy).
+      Drag the slider to apply the regularizer and watch the cloud become isotropic.
+    </p>
+  </div>
+</section>
+
+<!-- ===== FROZEN TRANSFER PANEL ===== -->
+<section class="section" style="padding-top: 0.5rem;">
+  <div class="container is-max-desktop">
+    <div class="result-copy">
+      <h4>Frozen transfer isolates visual feature quality</h4>
+      <p>
+        For VLM evaluation, both the ViT-B/16 vision encoder and the language model are held frozen. Only a
+        lightweight MLP bridge is trained to map patch tokens into the language model input space.
+      </p>
+      <p>
+        Because neither endpoint is updated, downstream accuracy tests whether the pretrained patch tokens
+        already carry the visual structure the frozen LLM needs for question answering.
+      </p>
+    </div>
+
+    <div class="demo-card" id="vlmBridgeDemo">
+      <div class="demo-head">
+        <span class="demo-kicker">How downstream transfer is trained</span>
+      </div>
+
+      <svg id="vlmBridge" viewBox="0 0 860 330" role="img"
+           aria-label="Animated frozen-transfer protocol: a mountain image and question pass through a frozen vision encoder, trainable MLP bridge, and frozen language model."></svg>
+
+      <div class="controls">
+        <span class="stage">Step <b id="bridgeStageNum">1</b> · <span id="bridgeStageTxt">Ask a visual question</span></span>
+        <div class="track" aria-hidden="true">
+          <div class="track-fill" id="bridgeTrackFill"></div>
+          <div id="bridgeTrackDots"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="figure-caption has-text-centered">
+      <b>Frozen transfer protocol.</b> For VLM evaluation, the pretrained vision encoder and the language
+      model are frozen. Only a small MLP bridge learns to map the encoder's patch tokens into the language
+      model input space for question answering, isolating how readable the frozen visual representation is to
+      a downstream language model.
+    </p>
+  </div>
+</section>
+
+<!-- ===== RESULTS ===== -->
+<section class="section results-section">
+  <div class="container">
+    <div class="results-head">
+      <h2>Results</h2>
+    </div>
+
+    <div class="result-block" id="globalReadoutsChart">
+      <h3>Global Readouts</h3>
+      <div class="result-copy">
+        <h4>Pooled readouts tell two different stories</h4>
+        <p>
+          Zero-shot transfer and linear probing both reduce an image to a single pooled vector before scoring.
+          Zero-shot compares that vector to text embeddings, while linear probing asks whether the frozen CLS
+          feature is directly separable by class.
+        </p>
+        <p>
+          This separates alignment from visual feature quality: contrastive baselines retain the advantage on
+          the zero-shot protocol they optimize directly, but the objectives are close once the text encoder is
+          removed from the readout.
+        </p>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card" id="zeroShotChart">
+          <h4>Zero-shot transfer <span style="color:#9aa3ab; font-weight:400;">(0-100% accuracy)</span></h4>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
+            <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar-row">
+              <span class="bar-label">ImageNet</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:47%;--c:#9db1c5"></span></span><span class="bar-value">47.32</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:51%;--c:#c8794a"></span></span><span class="bar-value">50.78</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:42%;--c:#226999"></span></span><span class="bar-value">42.45</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Places365</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#9db1c5"></span></span><span class="bar-value">34.46</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#c8794a"></span></span><span class="bar-value">33.76</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:30%;--c:#226999"></span></span><span class="bar-value">29.97</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Aircraft</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:8%;--c:#9db1c5"></span></span><span class="bar-value">8.10</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:11%;--c:#c8794a"></span></span><span class="bar-value">10.62</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:8%;--c:#226999"></span></span><span class="bar-value">7.65</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Pets</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:69%;--c:#9db1c5"></span></span><span class="bar-value">68.98</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:77%;--c:#c8794a"></span></span><span class="bar-value">77.27</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:60%;--c:#226999"></span></span><span class="bar-value">59.63</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="result-note">
+            LeVLJEPA still learns nontrivial image-text alignment without negatives, but zero-shot directly
+            rewards the matched-vs-unmatched discrimination used by contrastive objectives.
+          </p>
+        </div>
+
+        <div class="chart-card" id="linearProbeChart">
+          <h4>Linear probing <span style="color:#9aa3ab; font-weight:400;">(0-100% accuracy)</span></h4>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
+            <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar-row">
+              <span class="bar-label">ImageNet</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#9db1c5"></span></span><span class="bar-value">65.75</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#c8794a"></span></span><span class="bar-value">66.34</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:65%;--c:#226999"></span></span><span class="bar-value">65.42</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Places365</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:37%;--c:#9db1c5"></span></span><span class="bar-value">37.11</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:37%;--c:#c8794a"></span></span><span class="bar-value">36.81</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:36%;--c:#226999"></span></span><span class="bar-value">36.07</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Aircraft</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:44%;--c:#9db1c5"></span></span><span class="bar-value">44.10</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:47%;--c:#c8794a"></span></span><span class="bar-value">47.46</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:46%;--c:#226999"></span></span><span class="bar-value">46.38</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Pets</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#9db1c5"></span></span><span class="bar-value">82.86</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#c8794a"></span></span><span class="bar-value">82.64</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:81%;--c:#226999"></span></span><span class="bar-value">81.28</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="result-note">
+            A linear probe discards the text encoder and isolates the pooled visual feature; here LeVLJEPA stays
+            within about 1.5 points of the strongest baseline on every benchmark.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-block">
+      <h3>Background Robustness</h3>
+      <div class="result-copy">
+        <h4>Even the global feature is less background-sensitive</h4>
+        <p>
+          The standard IID linear probe leaves the methods closely matched, but controlled background swaps
+          expose a smaller degradation for LeVLJEPA. This is consistent with a more object-focused global
+          representation, even before moving to patch-token evaluations.
+        </p>
+      </div>
+      <div class="chart-card delta-chart">
+        <h4>Accuracy drop under background shift <span style="color:#9aa3ab; font-weight:400;">(0-20 pts, lower is better)</span></h4>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+          <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
+          <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
+        </div>
+        <div class="bar-group">
+          <div class="bar-row">
+            <span class="bar-label">Mixed-Same</span>
+            <div class="bar-stack">
+              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:33%;--c:#9db1c5"></span></span><span class="bar-value">6.57</span></div>
+              <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:35%;--c:#c8794a"></span></span><span class="bar-value">7.03</span></div>
+              <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:30%;--c:#226999"></span></span><span class="bar-value">5.95</span></div>
+            </div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Mixed-Rand</span>
+            <div class="bar-stack">
+              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:93%;--c:#9db1c5"></span></span><span class="bar-value">18.67</span></div>
+              <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:90%;--c:#c8794a"></span></span><span class="bar-value">18.09</span></div>
+              <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:86%;--c:#226999"></span></span><span class="bar-value">17.21</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="result-note">
+          From Original to Mixed-Same, LeVLJEPA drops 5.95 points, compared with 6.57 for InfoNCE and 7.03 for
+          SigLIP. Under Mixed-Rand, it again has the smallest drop.
+        </p>
+      </div>
+    </div>
+
+    <div class="result-block" id="segmentationChart">
+      <h3>Dense Semantic Features</h3>
+      <div class="result-layout">
+      <div class="chart-card" id="segmentationBarsChart">
+        <h4>Linear segmentation on frozen patch tokens <span style="color:#9aa3ab; font-weight:400;">(0-35 mIoU)</span></h4>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+          <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
+          <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
+        </div>
+        <div class="bar-group">
+          <div class="bar-row">
+            <span class="bar-label">ADE20K</span>
+            <div class="bar-stack">
+              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:60%;--c:#9db1c5"></span></span><span class="bar-value">20.90</span></div>
+              <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:55%;--c:#c8794a"></span></span><span class="bar-value">19.24</span></div>
+              <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#226999"></span></span><span class="bar-value">23.15</span></div>
+            </div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">COCO-Stuff</span>
+            <div class="bar-stack">
+              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#9db1c5"></span></span><span class="bar-value">29.02</span></div>
+              <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#c8794a"></span></span><span class="bar-value">28.88</span></div>
+              <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:89%;--c:#226999"></span></span><span class="bar-value">31.10</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="result-note">
+          A single linear head exposes the per-token semantic structure that downstream dense systems consume.
+        </p>
+      </div>
+      <div class="result-copy">
+        <h4>Patch tokens separate the objectives</h4>
+        <p>
+          A frozen ViT emits a grid of patch tokens, and downstream dense systems consume that sequence rather
+          than a pooled CLS embedding. Semantic segmentation is therefore a direct readout of spatial and
+          semantic structure already present in the frozen patch features.
+        </p>
+        <p>
+          With only a single linear head, LeVLJEPA exceeds the stronger contrastive baseline by 2.25 mIoU on
+          ADE20K and 2.08 mIoU on COCO-Stuff, so the margin cannot be attributed to head capacity.
+        </p>
+      </div>
+      </div>
+    </div>
+
+    <div class="result-block" id="frozenBackboneChart">
+      <h3>Frozen VLM Backbone</h3>
+      <div class="result-copy">
+        <h4>The deployment setting: frozen encoder, frozen LLM</h4>
+        <p>
+          In the VLM protocol, the patch tokens are projected into a language model's input space and consumed
+          during question answering. Both the ViT-B/16 encoder and the language model stay frozen; only a
+          lightweight MLP bridge is trained.
+        </p>
+        <p>
+          Because neither endpoint is updated, downstream accuracy is a function of the pretrained visual
+          features and the bridge alone. Repeating the evaluation with Llama-1B and Qwen-1.5B separates
+          backbone quality from quirks of a particular language model.
+        </p>
+      </div>
+      <div class="chart-grid" id="frozenBackboneBars" role="img" aria-label="Frozen VLM backbone accuracy gains over a random baseline for GQA, VQAv2, and POPE under Llama-1B and Qwen-1.5B.">
+        <div class="chart-card">
+          <h4>Llama-1B <span style="color:#9aa3ab; font-weight:400;">(gain over random, 0-25 pts)</span></h4>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
+            <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar-row">
+              <span class="bar-label">GQA</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:25%;--c:#9db1c5"></span></span><span class="bar-value">+6.3</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:24%;--c:#c8794a"></span></span><span class="bar-value">+6.0</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:33%;--c:#226999"></span></span><span class="bar-value">+8.2</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">VQAv2</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#9db1c5"></span></span><span class="bar-value">+8.4</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:24%;--c:#c8794a"></span></span><span class="bar-value">+6.0</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:44%;--c:#226999"></span></span><span class="bar-value">+11.0</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">POPE</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:65%;--c:#9db1c5"></span></span><span class="bar-value">+16.2</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:50%;--c:#c8794a"></span></span><span class="bar-value">+12.4</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:69%;--c:#226999"></span></span><span class="bar-value">+17.3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h4>Qwen-1.5B <span style="color:#9aa3ab; font-weight:400;">(gain over random, 0-25 pts)</span></h4>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
+            <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar-row">
+              <span class="bar-label">GQA</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:21%;--c:#9db1c5"></span></span><span class="bar-value">+5.2</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:18%;--c:#c8794a"></span></span><span class="bar-value">+4.6</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:27%;--c:#226999"></span></span><span class="bar-value">+6.7</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">VQAv2</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:23%;--c:#9db1c5"></span></span><span class="bar-value">+5.8</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:16%;--c:#c8794a"></span></span><span class="bar-value">+4.1</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:42%;--c:#226999"></span></span><span class="bar-value">+10.5</span></div>
+              </div>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">POPE</span>
+              <div class="bar-stack">
+                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:76%;--c:#9db1c5"></span></span><span class="bar-value">+19.1</span></div>
+                <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:72%;--c:#c8794a"></span></span><span class="bar-value">+18.0</span></div>
+                <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:90%;--c:#226999"></span></span><span class="bar-value">+22.6</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="result-note">
+        Random initialization is the zero point for each task and language model. LeVLJEPA adds the largest gain
+        in every column, preserving the same encoder ordering across both language models.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<script>
+/* =================================================================
+   Shared animation engine — one rAF loop drives both figures,
+   pauses when offscreen, and respects reduced-motion.
+   ================================================================= */
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const reduceMotion = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- DIAGRAM ---------------- */
+  const diagram = (function () {
+    const svg = document.getElementById("diagram");
+    const C = {
+      wire:"#9db1c5", predictor:"#dcecf8", predictorB:"#b4d4ec", predictorI:"#274a63",
+      encoder:"#ddd7f4", encoderB:"#bcb2e7", encoderI:"#3a3173",
+      sig:"#ed5b52", sigBg:"#fbe2e1", mse:"#f08a84",
+      vision:"#5b8fd6", text:"#c8794a", ink:"#222"
+    };
+    const VIS_CELLS = ["#9cc0ec","#6ea2dd","#bcd6f2","#5b8fd6","#86b3e6","#aecbef"];
+    const TXT_CELLS = ["#edc09a","#dd9a63","#f2d6bc","#d6864a","#e6b386","#efd0b1"];
+
+    const lenCache = new Map();
+    function pathLen(p){ let l = lenCache.get(p); if (l==null){ l = p.getTotalLength(); lenCache.set(p,l);} return l; }
+    function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);
+      for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+
+    const L = { zv:185, zhv:315, zht:545, zt:675, visC:250, txtC:610, sigL:60, sigR:800,
+      cellTop:200, cellH:14, cellN:6, cellW:30, predTop:52, predBot:116, encTop:364, encBot:430 };
+    L.rowY = L.cellTop + (L.cellN*L.cellH)/2;
+    const cellBottom = L.cellTop + L.cellN*L.cellH;
+
+    const wireGroup = el("g", {});
+    function wire(d){ return el("path",{d,fill:"none",stroke:C.wire,"stroke-width":2.2,"stroke-linecap":"round"},wireGroup); }
+    wire(`M ${L.visC} 520 L ${L.visC} ${L.encBot}`);
+    wire(`M ${L.txtC} 500 L ${L.txtC} ${L.encBot}`);
+    const wEncV = wire(`M ${L.visC} ${L.encTop} C ${L.visC} 330, ${L.zv} 320, ${L.zv} ${cellBottom}`);
+    const wEncT = wire(`M ${L.txtC} ${L.encTop} C ${L.txtC} 330, ${L.zt} 320, ${L.zt} ${cellBottom}`);
+    const wZvP  = wire(`M ${L.zv} ${L.cellTop} C ${L.zv} 165, ${L.visC} 150, ${L.visC} ${L.predBot}`);
+    const wZtP  = wire(`M ${L.zt} ${L.cellTop} C ${L.zt} 165, ${L.txtC} 150, ${L.txtC} ${L.predBot}`);
+    const wPvHt = wire(`M ${L.visC} ${L.predBot} C ${L.visC} 175, ${L.zht} 150, ${L.zht} ${L.cellTop}`);
+    const wPtHv = wire(`M ${L.txtC} ${L.predBot} C ${L.txtC} 175, ${L.zhv} 150, ${L.zhv} ${L.cellTop}`);
+
+    const defs = el("defs", {});
+    function arrow(id,color){ const m=el("marker",{id,viewBox:"0 0 10 10",refX:"8",refY:"5",
+      markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
+      el("path",{d:"M0,0 L10,5 L0,10 z",fill:color},m); }
+    arrow("arrMse",C.mse); arrow("arrSig",C.sig);
+
+    function mseArrow(x1,x2){
+      const y=L.rowY, pad=4, mid=(x1+x2)/2; const g=el("g",{});
+      el("line",{x1:x1+pad,y1:y,x2:x2-pad,y2:y,stroke:C.mse,"stroke-width":2.4,
+        "marker-start":"url(#arrMse)","marker-end":"url(#arrMse)",class:"mse-line"},g);
+      el("line",{x1:x1+pad,y1:y-6,x2:x1+pad,y2:y+6,stroke:C.mse,"stroke-width":2,class:"mse-line"},g);
+      el("line",{x1:x2-pad,y1:y-6,x2:x2-pad,y2:y+6,stroke:C.mse,"stroke-width":2,class:"mse-line"},g);
+      el("rect",{x:mid-26,y:y+12,width:52,height:20,rx:10,fill:C.sigBg,class:"mse-tagbg"},g);
+      el("text",{x:mid,y:y+26,"text-anchor":"middle","font-size":12.5,"font-weight":600,fill:C.sig,class:"t-mono"},g).textContent="MSE";
+      return g;
+    }
+    const mseV = mseArrow(L.zv+L.cellW/2, L.zhv-L.cellW/2);
+    const mseT = mseArrow(L.zht+L.cellW/2, L.zt-L.cellW/2);
+
+    function sigPill(cx,dir){
+      const g=el("g",{}); const y=L.rowY;
+      const innerX = dir<0 ? L.zv-L.cellW/2-4 : L.zt+L.cellW/2+4;
+      const pillEdge = dir<0 ? cx+34 : cx-34;
+      el("line",{x1:pillEdge,y1:y,x2:innerX,y2:y,stroke:C.sig,"stroke-width":2.4,
+        "marker-start":"url(#arrSig)","marker-end":"url(#arrSig)"},g);
+      el("rect",{x:cx-30,y:y-13,width:60,height:26,rx:13,fill:C.sigBg,class:"sig-rect"},g);
+      el("text",{x:cx,y:y+4.5,"text-anchor":"middle","font-size":11.5,"font-weight":600,fill:C.sig,class:"t-mono"},g).textContent="SIGReg";
+      return g;
+    }
+    const sigExitL = sigPill(L.sigL,-1), sigExitR = sigPill(L.sigR,+1);
+
+    function box(cx,top,bot,w,fill,border,ink,label){
+      const g=el("g",{}); const x=cx-w/2;
+      el("rect",{x,y:top,width:w,height:bot-top,rx:14,fill,stroke:border,"stroke-width":1.6},g);
+      el("text",{x:cx,y:(top+bot)/2+6,"text-anchor":"middle","font-size":17,class:"t-box",fill:ink},g).textContent=label;
+      return g;
+    }
+    box(L.visC,L.predTop,L.predBot,168,C.predictor,C.predictorB,C.predictorI,"Predictor");
+    box(L.txtC,L.predTop,L.predBot,168,C.predictor,C.predictorB,C.predictorI,"Predictor");
+    box(L.visC,L.encTop,L.encBot,200,C.encoder,C.encoderB,C.encoderI,"Vision Encoder");
+    box(L.txtC,L.encTop,L.encBot,200,C.encoder,C.encoderB,C.encoderI,"Text Encoder");
+
+    function glow(cx,top,bot,w,color){ return el("rect",{x:cx-w/2-4,y:top-4,width:w+8,height:bot-top+8,
+      rx:18,fill:"none",stroke:color,"stroke-width":2.5,opacity:0}); }
+    const glowEncV=glow(L.visC,L.encTop,L.encBot,200,C.encoderB), glowEncT=glow(L.txtC,L.encTop,L.encBot,200,C.encoderB);
+    const glowPredV=glow(L.visC,L.predTop,L.predBot,168,C.predictorB), glowPredT=glow(L.txtC,L.predTop,L.predBot,168,C.predictorB);
+
+    function strip(cx,colors){
+      const g=el("g",{}); const x=cx-L.cellW/2;
+      el("rect",{x:x-3,y:L.cellTop-3,width:L.cellW+6,height:L.cellN*L.cellH+6,rx:7,fill:"#fff",stroke:"#e3ddd1","stroke-width":1.2,opacity:.9},g);
+      const cells=[];
+      for(let i=0;i<L.cellN;i++) cells.push(el("rect",{x,y:L.cellTop+i*L.cellH+1,width:L.cellW,height:L.cellH-2,rx:3,fill:colors[i],opacity:0},g));
+      return {cells};
+    }
+    const sZv=strip(L.zv,VIS_CELLS), sZhv=strip(L.zhv,TXT_CELLS.map(()=> "#cdd6df")),
+          sZht=strip(L.zht,VIS_CELLS.map(()=> "#cdd6df")), sZt=strip(L.zt,TXT_CELLS);
+    sZhv.target=VIS_CELLS.slice(); sZht.target=TXT_CELLS.slice();
+
+    function vlabel(cx,base,sub,hat){
+      const y=L.cellTop-14; const g=el("g",{});
+      // white halo so the label reads clearly over the connector wires behind it
+      el("rect",{x:cx-15,y:y-22,width:30,height:30,rx:7,fill:"#fff",opacity:0.92},g);
+      const t=el("text",{x:cx,y,"text-anchor":"middle","font-size":18,class:"t-math",fill:C.ink},g);
+      t.textContent=base;
+      const s=document.createElementNS(NS,"tspan"); s.setAttribute("font-size","12"); s.setAttribute("dy","5"); s.textContent=sub; t.appendChild(s);
+      if(hat) el("path",{d:`M ${cx-9} ${y-15} L ${cx-3} ${y-21} L ${cx+3} ${y-15}`,fill:"none",stroke:C.ink,"stroke-width":1.6,"stroke-linecap":"round","stroke-linejoin":"round"},g);
+      return g;
+    }
+    vlabel(L.zv,"Z","V"); vlabel(L.zhv,"Z","V",true); vlabel(L.zht,"Z","T",true); vlabel(L.zt,"Z","T");
+
+    // inputs: patch image
+    const imgG=el("g",{}); const IMG={x:L.visC-42,y:446,s:84,n:6};
+    function sceneColor(r,c){
+      if(r<4){ const lerp=(a,b,k)=>Math.round(a+(b-a)*k); const k=r/3.3;
+        let col=`rgb(${lerp(58,255,k)},${lerp(74,178,k)},${lerp(122,122,k)})`;
+        if((r===1||r===2)&&c===4) col="#ffd27a"; if(r===2&&c===4) col="#ffe0a0"; return col;
+      } else { const sh=["#2c3e54","#243248","#34465e"]; let col=sh[(r*3+c)%3];
+        if(r===5&&(c===1||c===4)) col="#1d2a3c"; return col; }
+    }
+    el("rect",{x:IMG.x-3,y:IMG.y-3,width:IMG.s+6,height:IMG.s+6,rx:10,fill:"#fff",stroke:"#e3ddd1","stroke-width":1.3},imgG);
+    const cs=IMG.s/IMG.n;
+    for(let r=0;r<IMG.n;r++)for(let c=0;c<IMG.n;c++)
+      el("rect",{x:IMG.x+c*cs+0.6,y:IMG.y+r*cs+0.6,width:cs-1.2,height:cs-1.2,rx:1.5,fill:sceneColor(r,c)},imgG);
+    el("text",{x:L.visC,y:IMG.y+IMG.s+18,"text-anchor":"middle","font-size":11,class:"t-mono",fill:C.ink},imgG).textContent="X";
+    el("text",{x:L.visC+9,y:IMG.y+IMG.s+21,"text-anchor":"middle","font-size":8,class:"t-mono",fill:C.ink},imgG).textContent="V";
+
+    // inputs: caption tokens
+    const capG=el("g",{}); const capCY=488;
+    const tokenEls=[]; const rows=[["a","mountain"],["at","sunrise"]];
+    rows.forEach((row,ri)=>{
+      let totalW=row.reduce((s,t)=> s+(t.length*7.2+16),0)+(row.length-1)*6; let x=L.txtC-totalW/2;
+      const y=capCY-9+ri*18;
+      row.forEach(tok=>{ const w=tok.length*7.2+16; const g=el("g",{});
+        el("rect",{x,y:y-11,width:w,height:16,rx:5,fill:"#f3ece2",stroke:"#e6d8c6","stroke-width":1},g);
+        el("text",{x:x+w/2,y:y+1,"text-anchor":"middle","font-size":10.5,class:"t-mono",fill:C.text},g).textContent=tok;
+        capG.appendChild(g); tokenEls.push({cx:x+w/2,cy:y-3}); x+=w+6; });
+    });
+    el("text",{x:L.txtC,y:capCY+34,"text-anchor":"middle","font-size":11,class:"t-mono",fill:C.ink},capG).textContent="X";
+    el("text",{x:L.txtC+9,y:capCY+37,"text-anchor":"middle","font-size":8,class:"t-mono",fill:C.ink},capG).textContent="T";
+
+    // particles
+    const flowLayer=el("g",{});
+    function dots(n,color,r){ const a=[]; for(let i=0;i<n;i++) a.push(el("circle",{r:r||4,fill:color,opacity:0},flowLayer)); return a; }
+    const pEncV=dots(4,C.vision), pEncT=dots(4,C.text), pZvP=dots(3,C.vision), pZtP=dots(3,C.text),
+          pPvHt=dots(4,C.predictorI,3.6), pPtHv=dots(4,C.predictorI,3.6);
+    function placeDots(ds,path,prog,span){
+      span=span||1; const len=pathLen(path); const n=ds.length;
+      for(let i=0;i<n;i++){ const off=i/n; let p=prog-off*span; p=((p%1)+1)%1;
+        const pt=path.getPointAtLength(p*len); ds[i].setAttribute("cx",pt.x); ds[i].setAttribute("cy",pt.y);
+        const edge=Math.min(p,1-p); ds[i].setAttribute("opacity", prog>0.001 ? Math.min(1,edge*6)*0.95 : 0); }
+    }
+    function hide(ds){ for(const d of ds) d.setAttribute("opacity",0); }
+
+    const riseLayer=el("g",{});
+    const visRisers=[]; for(let i=0;i<5;i++) visRisers.push(el("rect",{width:9,height:9,rx:2,fill:VIS_CELLS[i%6],opacity:0},riseLayer));
+    const txtRisers=[]; for(let i=0;i<4;i++) txtRisers.push(el("rect",{width:8,height:8,rx:3,fill:"#f3ece2",stroke:"#e6d8c6",opacity:0},riseLayer));
+
+    const STAGES=[
+      {t0:0.06,t1:0.34,n:1,txt:"Encode each modality"},
+      {t0:0.30,t1:0.44,n:2,txt:"Read out embeddings (CLS / EOS token)"},
+      {t0:0.44,t1:0.66,n:3,txt:"Predict across modalities"},
+      {t0:0.64,t1:0.82,n:4,txt:"Minimize cross-modal MSE — stop-grad targets"},
+      {t0:0.80,t1:0.99,n:5,txt:"Regularize each marginal → SIGReg"},
+    ];
+    const stageNum=document.getElementById("stageNum"), stageTxt=document.getElementById("stageTxt"), trackFill=document.getElementById("trackFill");
+    const trackDots=document.getElementById("trackDots");
+    STAGES.forEach(s=>{ const d=document.createElement("div"); d.className="track-dot"; d.style.left=(s.t0*100)+"%"; trackDots.appendChild(d); });
+
+    const clamp01=x=>Math.max(0,Math.min(1,x));
+    const ease=x=> x<0.5 ? 2*x*x : 1-Math.pow(-2*x+2,2)/2;
+    function hexToRgb(h){ if(h[0]!=="#") return null; if(h.length===4) h="#"+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];
+      const n=parseInt(h.slice(1),16); return {r:(n>>16)&255,g:(n>>8)&255,b:n&255}; }
+    function lerpColor(a,b,t){ const pa=hexToRgb(a),pb=hexToRgb(b); if(!pa||!pb) return b;
+      return `rgb(${Math.round(pa.r+(pb.r-pa.r)*t)},${Math.round(pa.g+(pb.g-pa.g)*t)},${Math.round(pa.b+(pb.b-pa.b)*t)})`; }
+    function setStrip(s,p){ s.cells.forEach((c,i)=> c.setAttribute("opacity", clamp01((p-i*0.10)/0.5))); }
+    const pp=(u,s)=>clamp01((u-s.t0)/(s.t1-s.t0));
+
+    let lastStage=-1;
+    function render(u){
+      trackFill.style.width=(u*100)+"%";
+      let active=STAGES[0]; for(const s of STAGES) if(u>=s.t0) active=s;
+      if(active.n!==lastStage){ stageNum.textContent=active.n; stageTxt.textContent=active.txt; lastStage=active.n; }
+      const sEnc=STAGES[0],sEmb=STAGES[1],sPred=STAGES[2],sMse=STAGES[3],sSig=STAGES[4];
+
+      const encP=pp(u,sEnc), encOn=u>=sEnc.t0&&u<sEnc.t1+0.04;
+      glowEncV.setAttribute("opacity", encOn?0.35+0.35*Math.sin(u*60):0);
+      glowEncT.setAttribute("opacity", encOn?0.35+0.35*Math.sin(u*60+1):0);
+      visRisers.forEach((rr,i)=>{ const lo=clamp01((encP-i*0.12)/0.45);
+        if(lo<=0||lo>=1){ rr.setAttribute("opacity",0); return; }
+        const sx=IMG.x+(i%3)*30+12, sy=IMG.y+20, ex=L.visC+(i-2)*8, ey=L.encBot-8;
+        rr.setAttribute("x",sx+(ex-sx)*ease(lo)); rr.setAttribute("y",sy+(ey-sy)*ease(lo));
+        rr.setAttribute("opacity",Math.sin(lo*Math.PI)*0.95); });
+      txtRisers.forEach((rr,i)=>{ const lo=clamp01((encP-i*0.14)/0.45);
+        if(lo<=0||lo>=1){ rr.setAttribute("opacity",0); return; }
+        const tk=tokenEls[i], ex=L.txtC+(i-1.5)*10, ey=L.encBot-8;
+        rr.setAttribute("x",(tk.cx+(ex-tk.cx)*ease(lo))-4); rr.setAttribute("y",(tk.cy+(ey-tk.cy)*ease(lo))-4);
+        rr.setAttribute("opacity",Math.sin(lo*Math.PI)*0.95); });
+      if(u>=sEnc.t0+0.12&&u<sEmb.t1){ const p=clamp01((u-(sEnc.t0+0.12))/0.30); placeDots(pEncV,wEncV,p); placeDots(pEncT,wEncT,p); }
+      else { hide(pEncV); hide(pEncT); }
+
+      const embP=pp(u,sEmb); setStrip(sZv, u>=sEmb.t0?embP:0); setStrip(sZt, u>=sEmb.t0?embP:0);
+
+      const predP=pp(u,sPred), predOn=u>=sPred.t0&&u<sPred.t1+0.04;
+      glowPredV.setAttribute("opacity", predOn?0.3+0.3*Math.sin(u*55):0);
+      glowPredT.setAttribute("opacity", predOn?0.3+0.3*Math.sin(u*55+1.5):0);
+      if(predOn){ placeDots(pZvP,wZvP,clamp01(predP/0.5)); placeDots(pZtP,wZtP,clamp01(predP/0.5));
+        placeDots(pPvHt,wPvHt,clamp01((predP-0.25)/0.6)); placeDots(pPtHv,wPtHv,clamp01((predP-0.25)/0.6)); }
+      else { hide(pZvP);hide(pZtP);hide(pPvHt);hide(pPtHv); }
+      const fillHat=u>=sPred.t0?clamp01((predP-0.3)/0.6):0; setStrip(sZhv,fillHat); setStrip(sZht,fillHat);
+
+      const m=u>=sMse.t0?ease(pp(u,sMse)):0;
+      sZhv.cells.forEach((c,i)=>c.setAttribute("fill",lerpColor("#cdd6df",sZhv.target[i],m)));
+      sZht.cells.forEach((c,i)=>c.setAttribute("fill",lerpColor("#cdd6df",sZht.target[i],m)));
+      const mseGlow=u>=sMse.t0&&u<sMse.t1+0.03;
+      [mseV,mseT].forEach(g=>{ g.querySelectorAll(".mse-line").forEach(l=>l.setAttribute("opacity",mseGlow?0.6+0.4*Math.sin(u*55):1));
+        const tg=g.querySelector(".mse-tagbg"); if(tg) tg.setAttribute("opacity",mseGlow?0.7+0.3*Math.sin(u*55):1); });
+
+      const sigOn=u>=sSig.t0, pulse=sigOn?0.5+0.5*Math.sin(u*40):0;
+      [sigExitL,sigExitR].forEach(g=>{ g.style.opacity=sigOn?(0.55+0.45*pulse):0.85;
+        const rect=g.querySelector(".sig-rect"); rect.setAttribute("fill", sigOn?lerpColor("#fbe2e1","#f6b9b5",pulse):"#fbe2e1"); });
+    }
+    return { render, STAGES };
+  })();
+
+  /* ---------------- SIGReg ---------------- */
+  const sigreg = (function () {
+    const svg=document.getElementById("sigreg");
+    const C={ target:"#1d3557" };
+    const DIRS=[{ang:118,color:"#c0504a"},{ang:52,color:"#5fa052"},{ang:-68,color:"#b06fd0"}];
+    function el(tag,attrs,parent){ const e=document.createElementNS(NS,tag);
+      for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+
+    const LP={cx:175,cy:170,r:130};
+    const defs=el("defs",{}); const clip=el("clipPath",{id:"latentClip"},defs);
+    el("circle",{cx:LP.cx,cy:LP.cy,r:LP.r-1},clip);
+    el("circle",{cx:LP.cx,cy:LP.cy,r:LP.r,fill:"#fbfaf6",stroke:"#cdd9e3","stroke-width":1.6});
+    el("line",{x1:LP.cx-LP.r,y1:LP.cy,x2:LP.cx+LP.r,y2:LP.cy,stroke:"#cdd9e3","stroke-width":1.2});
+    el("line",{x1:LP.cx,y1:LP.cy-LP.r,x2:LP.cx,y2:LP.cy+LP.r,stroke:"#cdd9e3","stroke-width":1.2});
+    el("text",{x:LP.cx,y:318,"text-anchor":"middle","font-size":12,class:"t-cap",fill:"#555"}).textContent="(a) latent embedding distribution";
+
+    const N=90, SCALE=38; let pts=[], M;
+    function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+    function standardize(raw){
+      const n=raw.length, mx=raw.reduce((s,p)=>s+p[0],0)/n, my=raw.reduce((s,p)=>s+p[1],0)/n;
+      let a=0,b=0,c=0;
+      raw.forEach(p=>{ const x=p[0]-mx,y=p[1]-my; a+=x*x; b+=x*y; c+=y*y; });
+      a/=n; b/=n; c/=n;
+      const tr=a+c, det=Math.max(1e-6,a*c-b*b);
+      const disc=Math.sqrt(Math.max(0,tr*tr/4-det));
+      const l1=Math.max(1e-6,tr/2+disc), l2=Math.max(1e-6,tr/2-disc);
+      const ang=Math.abs(b)>1e-8 ? Math.atan2(l1-a,b) : (a>=c?0:Math.PI/2);
+      const ca=Math.cos(ang), sa=Math.sin(ang);
+      return raw.map(p=>{
+        const x=p[0]-mx,y=p[1]-my;
+        const u=ca*x+sa*y, v=-sa*x+ca*y;
+        return [ca*u/Math.sqrt(l1)-sa*v/Math.sqrt(l2), sa*u/Math.sqrt(l1)+ca*v/Math.sqrt(l2)];
+      });
+    }
+    function makeTarget(){
+      let z;
+      for(let tries=0; tries<80; tries++){
+        const raw=[]; for(let i=0;i<N;i++) raw.push([randn(),randn()]);
+        z=standardize(raw);
+        const maxR=Math.max(...z.map(p=>Math.hypot(p[0],p[1])));
+        if(maxR<3.15) return z;
+      }
+      return z;
+    }
+    function makeT(){ return {
+      th:Math.random()*Math.PI, sx:1.75+Math.random()*0.55, sy:0.34+Math.random()*0.16,
+      shear:(Math.random()*0.9-0.45), mx:(Math.random()*1.0-0.5)+0.45, my:(Math.random()*1.0-0.5)-0.35
+    }; }
+    function applyM(z,t,i){
+      const ct=Math.cos(t.th),st=Math.sin(t.th);
+      const bend=0.22*Math.sin(z[1]*1.7+i*.37), ripple=0.14*Math.sin(z[0]*2.3+i*.19);
+      const x=z[0]*t.sx+t.shear*z[1]+bend, y=z[1]*t.sy+ripple;
+      return [ct*x-st*y+t.mx, st*x+ct*y+t.my];
+    }
+    function resample(){
+      M=makeT(); pts=[];
+      const targets=makeTarget();
+      for(let i=0;i<N;i++){
+        const z=targets[i], ax=applyM(z,M,i);
+        const vx=z[0]-ax[0], vy=z[1]-ax[1], len=Math.hypot(vx,vy)||1;
+        const side=(i%2?1:-1)*(0.15+0.25*Math.random());
+        const drift=[-vy/len*side+(Math.random()-.5)*0.14, vx/len*side+(Math.random()-.5)*0.14];
+        pts.push({z,ax,drift,phase:Math.random()*Math.PI*2});
+      }
+    }
+    resample();
+
+    const dotG=el("g",{"clip-path":"url(#latentClip)"}); const dotEls=[];
+    for(let i=0;i<N;i++) dotEls.push(el("circle",{r:4.1,fill:"#9cc0ec",stroke:"#5b8fd6","stroke-width":1.1},dotG));
+
+    function arrow(id,color){ const m=el("marker",{id,viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"6",markerHeight:"6",orient:"auto"},defs);
+      el("path",{d:"M0,0 L10,5 L0,10 z",fill:color},m); }
+    DIRS.forEach((d,i)=>{ arrow("sa"+i,d.color); const a=d.ang*Math.PI/180, len=LP.r*0.86;
+      el("line",{x1:LP.cx,y1:LP.cy,x2:LP.cx+Math.cos(a)*len,y2:LP.cy-Math.sin(a)*len,stroke:d.color,"stroke-width":3,"marker-end":"url(#sa"+i+")","stroke-linecap":"round"}); });
+
+    const RP={x:380,w:440,top:36,h:80,gap:14};
+    el("text",{x:RP.x+RP.w/2,y:318,"text-anchor":"middle","font-size":12,class:"t-cap",fill:"#555"}).textContent="(b) normality test along random 1-D projections";
+    function pushArrow(id,color){ const m=el("marker",{id,viewBox:"0 0 10 10",refX:"8",refY:"5",
+      markerWidth:"5",markerHeight:"5",orient:"auto"},defs);
+      el("path",{d:"M0,0 L10,5 L0,10 z",fill:color,opacity:.68},m);
+    }
+    const plots=DIRS.map((d,i)=>{ const y0=RP.top+i*(RP.h+RP.gap); const g=el("g",{});
+      pushArrow("push"+i,d.color);
+      el("line",{x1:RP.x,y1:y0+RP.h,x2:RP.x+RP.w,y2:y0+RP.h,stroke:"#dfe5ea","stroke-width":1.2},g);
+      const target=el("path",{fill:"none",stroke:C.target,"stroke-width":2,opacity:.85},g);
+      const fillc=el("path",{fill:d.color,opacity:0.12,stroke:"none"},g);
+      const curve=el("path",{fill:"none",stroke:d.color,"stroke-width":2.6,"stroke-linejoin":"round"},g);
+      const pushes=[9,17,27,38,47].map(()=>el("path",{fill:"none",stroke:d.color,"stroke-width":1.5,
+        "stroke-linecap":"round",opacity:.45,"marker-end":"url(#push"+i+")"},g));
+      el("rect",{x:RP.x-2,y:y0+8,width:4,height:RP.h-16,rx:2,fill:d.color},g);
+      return {y0,target,curve,fillc,pushes}; });
+
+    const XR=3.4,NB=56,BW=0.34;
+    const pdf=x=>Math.exp(-x*x/2)/Math.sqrt(2*Math.PI);
+    function kde(vals){ const d=new Array(NB).fill(0); const inv=1/(vals.length*BW*Math.sqrt(2*Math.PI));
+      for(let b=0;b<NB;b++){ const x=-XR+(2*XR)*b/(NB-1); let s=0; for(const v of vals){ const u=(x-v)/BW; s+=Math.exp(-u*u/2); } d[b]=s*inv; } return d; }
+    function pathFrom(dens,plot,fill){ const peak=0.46; let d="";
+      for(let b=0;b<NB;b++){ const x=RP.x+RP.w*b/(NB-1); const y=plot.y0+RP.h-(dens[b]/peak)*(RP.h-6);
+        d+=(b===0?"M":"L")+x.toFixed(1)+" "+y.toFixed(1)+" "; }
+      if(fill) d+=`L ${RP.x+RP.w} ${plot.y0+RP.h} L ${RP.x} ${plot.y0+RP.h} Z`; return d; }
+    const yAt=(density,plot)=>plot.y0+RP.h-(density/0.46)*(RP.h-6);
+    const targetDens=(()=>{const a=[];for(let b=0;b<NB;b++){const x=-XR+(2*XR)*b/(NB-1);a.push(pdf(x));}return a;})();
+    plots.forEach(p=>p.target.setAttribute("d",pathFrom(targetDens,p,false)));
+
+    const slider=document.getElementById("sigSlider");
+    let t=0, auto=false, autoDir=1;
+    const setVis=v=>slider.style.setProperty("--p",v+"%");
+    const ease=x=>x*x*(3-2*x);
+
+    function draw(dt){
+      if(auto){ t+=autoDir*dt/4200; if(t>=1){t=1;autoDir=-1;} if(t<=0){t=0;autoDir=1;} slider.value=Math.round(t*100); }
+      setVis(slider.value);
+      const dataX=[],dataY=[];
+      const q=ease(t), settle=Math.sin(Math.PI*q), wobble=settle*(1-q)*0.18;
+      for(let i=0;i<N;i++){ const p=pts[i];
+        const dx=p.ax[0]+(p.z[0]-p.ax[0])*q+p.drift[0]*settle+wobble*Math.sin(10*q+p.phase);
+        const dy=p.ax[1]+(p.z[1]-p.ax[1])*q+p.drift[1]*settle+wobble*Math.cos(9*q+p.phase);
+        dataX.push(dx);dataY.push(dy); dotEls[i].setAttribute("cx",LP.cx+dx*SCALE); dotEls[i].setAttribute("cy",LP.cy-dy*SCALE); }
+      DIRS.forEach((d,i)=>{ const a=d.ang*Math.PI/180, ux=Math.cos(a), uy=Math.sin(a); const vals=[];
+        for(let k=0;k<N;k++) vals.push(dataX[k]*ux+dataY[k]*uy); const dens=kde(vals);
+        const plot=plots[i];
+        plot.curve.setAttribute("d",pathFrom(dens,plot,false)); plot.fillc.setAttribute("d",pathFrom(dens,plot,true));
+        [9,17,27,38,47].forEach((b,j)=>{
+          const x=RP.x+RP.w*b/(NB-1), y0=yAt(dens[b],plot), y1=yAt(targetDens[b],plot);
+          const dy=y1-y0, len=Math.min(18,Math.abs(dy)*0.72), dir=Math.sign(dy)||1;
+          plot.pushes[j].setAttribute("d",`M ${x.toFixed(1)} ${(y0+dir*3).toFixed(1)} L ${x.toFixed(1)} ${(y0+dir*(3+len)).toFixed(1)}`);
+          plot.pushes[j].setAttribute("opacity",Math.min(.62,Math.max(.12,Math.abs(dy)/34)));
+        });
+      });
+    }
+    slider.addEventListener("input",()=>{ auto=false; t=slider.value/100; document.getElementById("sigAuto").textContent="▶ Auto"; });
+    document.getElementById("sigAuto").addEventListener("click",e=>{ auto=!auto; e.currentTarget.textContent=auto?"❚❚ Auto":"▶ Auto"; });
+    document.getElementById("sigResample").addEventListener("click",()=>resample());
+    setVis(0); draw(0);
+    function set(u){
+      auto=false;
+      t=Math.max(0,Math.min(1,u));
+      slider.value=Math.round(t*100);
+      document.getElementById("sigAuto").textContent="▶ Auto";
+      draw(0);
+    }
+    return { draw, set };
+  })();
+
+  /* ---------------- Frozen VLM bridge ---------------- */
+  const transfer = (function () {
+    const svg = document.getElementById("vlmBridge");
+    const C = {
+      vision:"#5b8fd6", visionSoft:"#dcecf8", text:"#c8794a", textSoft:"#f3ece2",
+      bridge:"#ed5b52", bridgeSoft:"#fbe2e1",
+      frozen:"#d7dce2", frozenInk:"#52616d", ink:"#222", wire:"#9db1c5"
+    };
+    function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);
+      for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+    function box(x,y,w,h,fill,stroke,ink,label,sub){
+      const g=el("g",{});
+      el("rect",{x,y,width:w,height:h,rx:13,fill,stroke,"stroke-width":1.6},g);
+      el("text",{x:x+w/2,y:y+h/2+(sub?-2:6),"text-anchor":"middle","font-size":15.5,class:"t-box",fill:ink},g).textContent=label;
+      if(sub) el("text",{x:x+w/2,y:y+h/2+18,"text-anchor":"middle","font-size":10.5,class:"t-mono",fill:ink,opacity:.72},g).textContent=sub;
+      return g;
+    }
+    function tag(x,y,w,label,fill,stroke,ink,parent){
+      const g=el("g",{},parent);
+      el("rect",{x,y,width:w,height:22,rx:7,fill,stroke,"stroke-width":1},g);
+      el("text",{x:x+w/2,y:y+15,"text-anchor":"middle","font-size":10.5,class:"t-mono",fill:ink},g).textContent=label;
+      return g;
+    }
+    function wire(d,color=C.wire,w=2.1, parent=wireLayer){
+      return el("path",{d,fill:"none",stroke:color,"stroke-width":w,"stroke-linecap":"round"},parent);
+    }
+    function setOpacity(group, value){ group.querySelectorAll("*").forEach(e=>e.setAttribute("opacity",value)); }
+
+    const defs=el("defs",{});
+    function arrow(id,color){ const m=el("marker",{id,viewBox:"0 0 10 10",refX:"8",refY:"5",
+      markerWidth:"7",markerHeight:"7",orient:"auto"},defs);
+      el("path",{d:"M0,0 L10,5 L0,10 z",fill:color},m); }
+    arrow("bridgeArr",C.bridge); arrow("wireArr",C.wire);
+
+    const wireLayer=el("g",{}), flowLayer=el("g",{}), uiLayer=el("g",{});
+
+    const imgG=el("g",{},uiLayer), IMG={x:54,y:74,s:94,n:6};
+    function sceneColor(r,c){
+      if(r<4){ const lerp=(a,b,k)=>Math.round(a+(b-a)*k); const k=r/3.3;
+        let col=`rgb(${lerp(58,255,k)},${lerp(74,178,k)},${lerp(122,122,k)})`;
+        if((r===1||r===2)&&c===4) col="#ffd27a"; if(r===2&&c===4) col="#ffe0a0"; return col;
+      }
+      const sh=["#2c3e54","#243248","#34465e"]; return sh[(r*3+c)%3];
+    }
+    el("rect",{x:IMG.x-4,y:IMG.y-4,width:IMG.s+8,height:IMG.s+8,rx:10,fill:"#fff",stroke:"#e3ddd1","stroke-width":1.3},imgG);
+    const cs=IMG.s/IMG.n;
+    for(let r=0;r<IMG.n;r++)for(let c=0;c<IMG.n;c++)
+      el("rect",{x:IMG.x+c*cs+0.7,y:IMG.y+r*cs+0.7,width:cs-1.4,height:cs-1.4,rx:1.6,fill:sceneColor(r,c)},imgG);
+    el("text",{x:IMG.x+IMG.s/2,y:IMG.y+IMG.s+21,"text-anchor":"middle","font-size":11,class:"t-mono",fill:C.ink},imgG).textContent="image";
+
+    const enc=box(214,86,166,64,C.visionSoft,"#b4d4ec","#274a63","Vision Encoder","frozen");
+    const bridge=box(454,86,142,64,C.bridgeSoft,"#f3b4b0","#8f312d","MLP Bridge","trainable");
+    const llm=el("g",{},uiLayer);
+    el("rect",{x:604,y:76,width:250,height:104,rx:13,fill:"#f7f7f7",stroke:"#d7dce2","stroke-width":1.6},llm);
+    el("text",{x:729,y:101,"text-anchor":"middle","font-size":15.5,class:"t-box",fill:C.frozenInk},llm).textContent="Language Model";
+    el("text",{x:729,y:119,"text-anchor":"middle","font-size":10.5,class:"t-mono",fill:C.frozenInk,opacity:.72},llm).textContent="frozen";
+    function lock(x,y,parent){
+      const g=el("g",{transform:`translate(${x-7} ${y-9})`,opacity:.82},parent);
+      el("path",{d:"M4 8 V5.8 C4 2.8 6 1 8 1 S12 2.8 12 5.8 V8",fill:"none",stroke:"#8a949d","stroke-width":1.7,"stroke-linecap":"round"},g);
+      el("rect",{x:2.5,y:7,width:11,height:9,rx:2.2,fill:"#f7f7f7",stroke:"#8a949d","stroke-width":1.5},g);
+      el("circle",{cx:8,cy:11.1,r:1.1,fill:"#8a949d"},g);
+    }
+    lock(362,101,enc); lock(834,101,llm);
+
+    function strip(x,y,colors,label,parent=uiLayer){
+      const g=el("g",{},parent);
+      el("rect",{x:x-4,y:y-4,width:38,height:94,rx:8,fill:"#fff",stroke:"#e3ddd1","stroke-width":1.2},g);
+      for(let i=0;i<6;i++) el("rect",{x,y:y+i*14+1,width:30,height:12,rx:3,fill:colors[i]},g);
+      el("text",{x:x+15,y:y+106,"text-anchor":"middle","font-size":11,class:"t-mono",fill:"#555"},g).textContent=label;
+      return g;
+    }
+    const patchColors=["#9cc0ec","#6ea2dd","#bcd6f2","#5b8fd6","#86b3e6","#aecbef"];
+    const patchStrip=strip(398,72,patchColors,"patch tokens");
+
+    const qG=el("g",{},uiLayer);
+    el("text",{x:660,y:137,"text-anchor":"middle","font-size":10.5,class:"t-mono",fill:C.bridge},qG).textContent="visual tokens";
+    el("text",{x:779,y:137,"text-anchor":"middle","font-size":10.5,class:"t-mono",fill:C.text},qG).textContent="text tokens";
+    for(let i=0;i<4;i++)
+      el("rect",{x:627+i*15,y:144,width:11,height:20,rx:3,fill:"#f2b5b1",stroke:"#f3b4b0","stroke-width":1},qG);
+    tag(711,143,44,"what",C.textSoft,"#e6d8c6",C.text,qG);
+    tag(762,143,28,"is",C.textSoft,"#e6d8c6",C.text,qG);
+    tag(796,143,42,"image?",C.textSoft,"#e6d8c6",C.text,qG);
+
+    const answer=el("g",{},uiLayer);
+    el("rect",{x:649,y:210,width:160,height:54,rx:12,fill:"#fff",stroke:"#e6d8c6","stroke-width":1.3},answer);
+    el("text",{x:729,y:232,"text-anchor":"middle","font-size":11,class:"t-mono",fill:"#777"},answer).textContent="generated token";
+    tag(689,238,80,"mountain",C.textSoft,"#e6d8c6",C.text,answer);
+
+    const lossG=el("g",{},uiLayer);
+    el("path",{d:"M 729 264 C 695 305, 545 300, 515 158",fill:"none",stroke:C.bridge,"stroke-width":2.2,
+      "stroke-dasharray":"6 7","marker-end":"url(#bridgeArr)"},lossG);
+    tag(565,272,104,"answer loss",C.bridgeSoft,"#f3b4b0",C.bridge,lossG);
+
+    const wImgEnc=wire("M 148 121 C 176 121, 190 118, 214 118");
+    const wEncPatch=wire("M 380 118 C 390 118, 392 118, 398 118");
+    const wPatchBridge=wire("M 432 118 C 444 118, 444 118, 454 118");
+    const wBridgeTok=wire("M 596 118 C 615 118, 613 154, 627 154",C.bridge);
+    const wSeqLlm=el("path",{d:"M 711 154 C 746 154, 785 154, 838 154",fill:"none",stroke:C.text,"stroke-width":1.4,opacity:0},wireLayer);
+    const wLlmAns=wire("M 729 180 C 729 193, 729 200, 729 210",C.text);
+
+    const trainGlowBridge=el("rect",{x:448,y:80,width:154,height:76,rx:17,fill:"none",stroke:C.bridge,"stroke-width":2.6,opacity:0},uiLayer);
+
+    function dots(n,color,r=4){ const a=[]; for(let i=0;i<n;i++) a.push(el("circle",{r,fill:color,opacity:0},flowLayer)); return a; }
+    const dImg=dots(4,C.vision), dPatch=dots(4,C.vision), dBridgeIn=dots(3,C.bridge),
+          dBridgeOut=dots(3,C.bridge), dQ=dots(4,C.text),
+          dAns=dots(3,C.text);
+    function place(ds,path,prog,span=.9){
+      const len=path.getTotalLength(), n=ds.length;
+      for(let i=0;i<n;i++){ let p=prog-(i/n)*span; p=((p%1)+1)%1;
+        const pt=path.getPointAtLength(p*len), edge=Math.min(p,1-p);
+        ds[i].setAttribute("cx",pt.x); ds[i].setAttribute("cy",pt.y);
+        ds[i].setAttribute("opacity",prog>0.001?Math.min(1,edge*7)*.95:0);
+      }
+    }
+    function hide(ds){ ds.forEach(d=>d.setAttribute("opacity",0)); }
+
+    const STAGES=[
+      {t0:0.04,t1:0.24,n:1,txt:"Ask a visual question"},
+      {t0:0.22,t1:0.44,n:2,txt:"Encode patch tokens with the frozen vision backbone"},
+      {t0:0.42,t1:0.64,n:3,txt:"Train the MLP bridge to make visual prefix tokens"},
+      {t0:0.62,t1:0.94,n:4,txt:"Answer loss updates the bridge, not the frozen models"},
+    ];
+    const stageNum=document.getElementById("bridgeStageNum"), stageTxt=document.getElementById("bridgeStageTxt"),
+          fill=document.getElementById("bridgeTrackFill"), dotsHost=document.getElementById("bridgeTrackDots");
+    STAGES.forEach(s=>{ const d=document.createElement("div"); d.className="track-dot"; d.style.left=(s.t0*100)+"%"; dotsHost.appendChild(d); });
+    let lastStage=-1;
+
+    function render(u){
+      fill.style.width=(u*100)+"%";
+      let active=STAGES[0]; for(const s of STAGES) if(u>=s.t0) active=s;
+      if(active.n!==lastStage){ stageNum.textContent=active.n; stageTxt.textContent=active.txt; lastStage=active.n; }
+      const p=(s)=>Math.max(0,Math.min(1,(u-s.t0)/(s.t1-s.t0)));
+      const s1=p(STAGES[0]), s2=p(STAGES[1]), s3=p(STAGES[2]), s4=p(STAGES[3]);
+
+      setOpacity(answer,u>STAGES[2].t0?1:0.25);
+      setOpacity(lossG,u>STAGES[3].t0?1:0.05);
+      trainGlowBridge.setAttribute("opacity",u>STAGES[2].t0&&u<STAGES[3].t1?0.25+0.35*Math.sin(u*55):0);
+
+      if(s1>0&&s1<1){ place(dQ,wSeqLlm,s1); } else hide(dQ);
+      if(s2>0&&s2<1){ place(dImg,wImgEnc,s2); place(dPatch,wEncPatch,s2); } else { hide(dImg); hide(dPatch); }
+      if(s3>0&&s3<1){
+        place(dBridgeIn,wPatchBridge,s3);
+        place(dBridgeOut,wBridgeTok,Math.max(0,s3-.25));
+      } else { hide(dBridgeIn); hide(dBridgeOut); }
+      if(s4>0&&s4<1){ place(dAns,wLlmAns,s4); } else hide(dAns);
+    }
+    return { render };
+  })();
+
+  /* ---------------- single shared clock ---------------- */
+  let exportLocked=false;
+  window.__levljepaExport = {
+    renderOverview: (u) => { exportLocked=true; diagram.render(Math.max(0,Math.min(1,u))); },
+    renderSigreg: (u) => { exportLocked=true; sigreg.set(Math.max(0,Math.min(1,u))); },
+    renderTransfer: (u) => { exportLocked=true; transfer.render(Math.max(0,Math.min(1,u))); },
+    release: () => { exportLocked=false; },
+  };
+
+  const LOOP=11000;
+  let startT=performance.now(), lastElapsed=0, lastNow=performance.now();
+  let visible=true;
+
+  // pause work when all figures are scrolled out of view
+  const visibleTargets = new Set();
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) visibleTargets.add(e.target); else visibleTargets.delete(e.target); });
+    visible=visibleTargets.size>0;
+    if(visible){ startT=performance.now()-lastElapsed; lastNow=performance.now(); }
+  },{threshold:0.01});
+  io.observe(document.getElementById("diagram"));
+  io.observe(document.getElementById("sigreg"));
+  io.observe(document.getElementById("vlmBridge"));
+
+  if(reduceMotion){ diagram.render(0.72); sigreg.draw(0); transfer.render(0.86); return; }
+
+  function tick(now){
+    requestAnimationFrame(tick);
+    if(!visible){ lastNow=now; return; }
+    const dt=Math.min(50, now-lastNow); lastNow=now;
+    const elapsed=(now-startT)%LOOP; lastElapsed=elapsed;
+    const u=elapsed/LOOP;
+    if(!exportLocked) diagram.render(u);
+    sigreg.draw(dt);
+    if(!exportLocked) transfer.render(u);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
