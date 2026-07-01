@@ -19,6 +19,8 @@
   <link rel="stylesheet" href="./static/css/index.css">
 
   <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/embedding-demo/data.js"></script>
+  <script defer src="./static/js/embedding-demo.js"></script>
 
   <script>
     window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
@@ -468,6 +470,101 @@
       model are frozen. Only a small MLP bridge learns to map the encoder's patch tokens into the language
       model input space for question answering, isolating how readable the frozen visual representation is to
       a downstream language model.
+    </p>
+  </div>
+</section>
+
+<!-- ===== PRECOMPUTED EMBEDDING EXPLORER ===== -->
+<section class="section embedding-demo-section" id="embedding-explorer">
+  <div class="container is-max-desktop">
+    <div class="embedding-demo-intro">
+      <h2>Explore what the models retrieve</h2>
+      <p>
+        We embedded 500 held-out images from ten Imagenette categories with the two ViT-B/16 checkpoints.
+        Compare their image spaces, then choose a text prompt to retrieve the nearest images.
+      </p>
+    </div>
+
+    <div class="embedding-demo" id="embeddingDemo" aria-busy="true">
+      <div class="embedding-demo-status" id="embeddingDemoStatus">
+        <span class="embedding-demo-spinner" aria-hidden="true"></span>
+        Loading the precomputed embedding space…
+      </div>
+
+      <div class="embedding-demo-content" id="embeddingDemoContent" hidden>
+        <div class="embedding-demo-heading">
+          <div>
+            <span class="embedding-demo-step">01</span>
+            <h3>Image embedding space</h3>
+          </div>
+          <p>Hover a point to inspect its image. Color indicates its ground-truth category.</p>
+        </div>
+
+        <div class="embedding-map-grid">
+          <article class="embedding-map-card">
+            <div class="embedding-model-title">
+              <span class="embedding-model-mark is-levl" aria-hidden="true"></span>
+              <div><strong>LeVLJEPA</strong><small>ours · 256-d</small></div>
+            </div>
+            <div class="embedding-map" id="levlEmbeddingMap" role="img"
+                 aria-label="t-SNE map of 500 LeVLJEPA image embeddings"></div>
+          </article>
+          <article class="embedding-map-card">
+            <div class="embedding-model-title">
+              <span class="embedding-model-mark is-clip" aria-hidden="true"></span>
+              <div><strong>CLIP (InfoNCE)</strong><small>baseline · 512-d</small></div>
+            </div>
+            <div class="embedding-map" id="clipEmbeddingMap" role="img"
+                 aria-label="t-SNE map of 500 CLIP-style InfoNCE image embeddings"></div>
+          </article>
+        </div>
+        <div class="embedding-legend" id="embeddingLegend" aria-label="Image categories"></div>
+        <p class="embedding-demo-method-note">
+          Each panel is an independent t-SNE projection (perplexity 30), so neighborhood structure—not axis
+          position or orientation—should be compared.
+        </p>
+
+        <div class="embedding-demo-divider" aria-hidden="true"></div>
+
+        <div class="embedding-demo-heading retrieval-heading">
+          <div>
+            <span class="embedding-demo-step">02</span>
+            <h3>Text-to-image retrieval</h3>
+          </div>
+          <p>Select a prompt to show its five nearest images by cosine similarity.</p>
+        </div>
+        <div class="embedding-query-list" id="embeddingQueries" role="group"
+             aria-label="Choose a text retrieval prompt"></div>
+
+        <div class="retrieval-grid" aria-live="polite">
+          <article class="retrieval-column">
+            <div class="embedding-model-title">
+              <span class="embedding-model-mark is-levl" aria-hidden="true"></span>
+              <div><strong>LeVLJEPA</strong><small>ours</small></div>
+            </div>
+            <div class="retrieval-results" id="levlRetrieval"></div>
+          </article>
+          <article class="retrieval-column">
+            <div class="embedding-model-title">
+              <span class="embedding-model-mark is-clip" aria-hidden="true"></span>
+              <div><strong>CLIP (InfoNCE)</strong><small>baseline</small></div>
+            </div>
+            <div class="retrieval-results" id="clipRetrieval"></div>
+          </article>
+        </div>
+        <p class="embedding-demo-method-note retrieval-note">
+          For LeVLJEPA, the text predictor maps the query into image space; the InfoNCE baseline uses its shared
+          contrastive space. Compare rankings rather than raw cosine magnitudes across models. Images,
+          embeddings, t-SNE coordinates, and similarities are all precomputed.
+        </p>
+      </div>
+    </div>
+
+    <p class="figure-caption has-text-centered">
+      <b>Embedding explorer.</b> Image and text features come from the released
+      <a href="https://huggingface.co/lukaskuhndkfz/LeVLJEPA-ViT-B-DataComp-200k">LeVLJEPA</a> and
+      <a href="https://huggingface.co/lukaskuhndkfz/InfoNCE-ViT-B-DataComp-200k">InfoNCE</a> checkpoints after
+      200k DataComp training steps. The interaction only filters precomputed values.
     </p>
   </div>
 </section>
