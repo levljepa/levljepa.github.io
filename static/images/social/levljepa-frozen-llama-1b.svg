@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}</style>
+  <rect x="0" y="0" width="1200" height="720" fill="#ffffff"/>
+  <text x="64" y="92" font-size="46" fill="#1e2830" font-weight="800">Frozen VLM backbone · Llama-1B</text>
+  <text x="66" y="130" font-size="24" fill="#6b7178" font-weight="500">Gain over random (pts)</text>
+  <rect x="754.2" y="167" width="22" height="22" rx="5" fill="#e28d84"/>
+  <text x="786.2" y="185.92" font-size="22" fill="#3a4149" font-weight="500">CLIP</text>
+  <rect x="865.5" y="167" width="22" height="22" rx="5" fill="#f0cf83"/>
+  <text x="897.5" y="185.92" font-size="22" fill="#3a4149" font-weight="500">SigLIP</text>
+  <rect x="1001.4" y="167" width="22" height="22" rx="5" fill="#6ea9cf" stroke="#2f6f96" stroke-width="1.6"/>
+  <text x="1033.4" y="185.92" font-size="22" fill="#3a4149" font-weight="700">LeVLJEPA</text>
+  <line x1="132" y1="624.0" x2="1132" y2="624.0" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="630.0" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">0</text>
+  <line x1="132" y1="541.2" x2="1132" y2="541.2" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="547.2" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">5</text>
+  <line x1="132" y1="458.4" x2="1132" y2="458.4" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="464.4" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">10</text>
+  <line x1="132" y1="375.6" x2="1132" y2="375.6" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="381.6" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">15</text>
+  <line x1="132" y1="292.8" x2="1132" y2="292.8" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="298.8" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">20</text>
+  <line x1="132" y1="210.0" x2="1132" y2="210.0" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="216.0" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">25</text>
+  <line x1="132" y1="210" x2="132" y2="624" stroke="#cdd2d7" stroke-width="1.6"/>
+  <line x1="132" y1="624" x2="1132" y2="624" stroke="#cdd2d7" stroke-width="1.6"/>
+  <path d="M192.1333333333333,624 L192.1333333333333,523.672 Q192.1333333333333,519.672 196.1333333333333,519.672 L250.08888888888885,519.672 Q254.08888888888885,519.672 254.08888888888885,523.672 L254.08888888888885,624 Z" fill="#e28d84"/>
+  <text x="223.1" y="511.7" font-size="22.7" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+6.3</text>
+  <path d="M267.68888888888887,624 L267.68888888888887,528.64 Q267.68888888888887,524.64 271.68888888888887,524.64 L325.64444444444445,524.64 Q329.64444444444445,524.64 329.64444444444445,528.64 L329.64444444444445,624 Z" fill="#f0cf83"/>
+  <text x="298.7" y="516.6" font-size="22.7" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+6.0</text>
+  <path d="M343.24444444444447,624 L343.24444444444447,492.208 Q343.24444444444447,488.208 347.24444444444447,488.208 L401.20000000000005,488.208 Q405.20000000000005,488.208 405.20000000000005,492.208 L405.20000000000005,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="374.2" y="480.2" font-size="22.7" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+8.2</text>
+  <text x="298.7" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">GQA</text>
+  <path d="M525.4666666666667,624 L525.4666666666667,488.89599999999996 Q525.4666666666667,484.89599999999996 529.4666666666667,484.89599999999996 L583.4222222222222,484.89599999999996 Q587.4222222222222,484.89599999999996 587.4222222222222,488.89599999999996 L587.4222222222222,624 Z" fill="#e28d84"/>
+  <text x="556.4" y="476.9" font-size="22.7" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+8.4</text>
+  <path d="M601.0222222222222,624 L601.0222222222222,528.64 Q601.0222222222222,524.64 605.0222222222222,524.64 L658.9777777777778,524.64 Q662.9777777777778,524.64 662.9777777777778,528.64 L662.9777777777778,624 Z" fill="#f0cf83"/>
+  <text x="632.0" y="516.6" font-size="22.7" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+6.0</text>
+  <path d="M676.5777777777778,624 L676.5777777777778,445.84000000000003 Q676.5777777777778,441.84000000000003 680.5777777777778,441.84000000000003 L734.5333333333333,441.84000000000003 Q738.5333333333333,441.84000000000003 738.5333333333333,445.84000000000003 L738.5333333333333,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="707.6" y="433.8" font-size="22.7" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+11.0</text>
+  <text x="632.0" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">VQAv2</text>
+  <path d="M858.8000000000001,624 L858.8000000000001,359.728 Q858.8000000000001,355.728 862.8000000000001,355.728 L916.7555555555556,355.728 Q920.7555555555556,355.728 920.7555555555556,359.728 L920.7555555555556,624 Z" fill="#e28d84"/>
+  <text x="889.8" y="347.7" font-size="22.7" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+16.2</text>
+  <path d="M934.3555555555556,624 L934.3555555555556,422.656 Q934.3555555555556,418.656 938.3555555555556,418.656 L992.3111111111111,418.656 Q996.3111111111111,418.656 996.3111111111111,422.656 L996.3111111111111,624 Z" fill="#f0cf83"/>
+  <text x="965.3" y="410.7" font-size="22.7" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+12.4</text>
+  <path d="M1009.9111111111112,624 L1009.9111111111112,341.512 Q1009.9111111111112,337.512 1013.9111111111112,337.512 L1067.8666666666668,337.512 Q1071.8666666666668,337.512 1071.8666666666668,341.512 L1071.8666666666668,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="1040.9" y="329.5" font-size="22.7" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">+17.3</text>
+  <text x="965.3" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">POPE</text>
+</svg>

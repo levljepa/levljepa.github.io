@@ -162,6 +162,15 @@
     .bar-value { font-family:'IBM Plex Mono', monospace; font-size:10px; color:#333; text-align:right; }
     .bar.lev .bar-name, .bar.lev .bar-value { font-weight:700; color:#1e3647; }
     .delta-chart .bar { grid-template-columns:78px 1fr 44px; }
+
+    /* ---- SVG vertical bar charts (rendered from the .bar-group data) ---- */
+    .bar-chart-svg { display:block; width:100%; max-width:540px; height:auto; overflow:visible; margin:0.15rem auto 0.35rem; }
+    .bc-grid { stroke:#eef0f2; stroke-width:1; }
+    .bc-axis { stroke:#cdd2d7; stroke-width:1.1; }
+    .bc-tick { font-family:'IBM Plex Mono', monospace; font-size:9px; fill:#9aa3ab; }
+    .bc-glabel { font-family:'Inter', sans-serif; font-size:11px; font-weight:500; fill:#444; }
+    .bc-value { font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:600; fill:#6b7178; }
+    .bc-value.emph { fill:#1e3647; font-weight:700; }
     .abstract-section { padding-top: 1.25rem; padding-bottom: 1.25rem; }
     .abstract-section .container { max-width: 1040px !important; }
     .abstract-section .abstract-box { max-width: 960px; }
@@ -512,10 +521,10 @@
           <article class="embedding-map-card">
             <div class="embedding-model-title">
               <span class="embedding-model-mark is-clip" aria-hidden="true"></span>
-              <div><strong>CLIP (InfoNCE)</strong><small>baseline · 512-d</small></div>
+              <div><strong>CLIP</strong><small>baseline · 512-d</small></div>
             </div>
             <div class="embedding-map" id="clipEmbeddingMap" role="img"
-                 aria-label="t-SNE map of 500 CLIP-style InfoNCE image embeddings"></div>
+                 aria-label="t-SNE map of 500 CLIP image embeddings"></div>
           </article>
         </div>
         <div class="embedding-legend" id="embeddingLegend" aria-label="Image categories"></div>
@@ -547,13 +556,13 @@
           <article class="retrieval-column">
             <div class="embedding-model-title">
               <span class="embedding-model-mark is-clip" aria-hidden="true"></span>
-              <div><strong>CLIP (InfoNCE)</strong><small>baseline</small></div>
+              <div><strong>CLIP</strong><small>baseline</small></div>
             </div>
             <div class="retrieval-results" id="clipRetrieval"></div>
           </article>
         </div>
         <p class="embedding-demo-method-note retrieval-note">
-          For LeVLJEPA, the text predictor maps the query into image space; the InfoNCE baseline uses its shared
+          For LeVLJEPA, the text predictor maps the query into image space; the CLIP baseline uses its shared
           contrastive space. Compare rankings rather than raw cosine magnitudes across models. Images,
           embeddings, t-SNE coordinates, and similarities are all precomputed.
         </p>
@@ -563,7 +572,7 @@
     <p class="figure-caption has-text-centered">
       <b>Embedding explorer.</b> Image and text features come from the released
       <a href="https://huggingface.co/lukaskuhndkfz/LeVLJEPA-ViT-B-DataComp-200k">LeVLJEPA</a> and
-      <a href="https://huggingface.co/lukaskuhndkfz/InfoNCE-ViT-B-DataComp-200k">InfoNCE</a> checkpoints after
+      <a href="https://huggingface.co/lukaskuhndkfz/InfoNCE-ViT-B-DataComp-200k">CLIP</a> checkpoints after
       200k DataComp training steps. The interaction only filters precomputed values.
     </p>
   </div>
@@ -595,7 +604,7 @@
         <div class="chart-card" id="zeroShotChart">
           <h4>Zero-shot transfer <span style="color:#9aa3ab; font-weight:400;">(0-100% accuracy)</span></h4>
           <div class="chart-legend">
-            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>CLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
           </div>
@@ -603,7 +612,7 @@
             <div class="bar-row">
               <span class="bar-label">ImageNet</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:47%;--c:#9db1c5"></span></span><span class="bar-value">47.32</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:47%;--c:#9db1c5"></span></span><span class="bar-value">47.32</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:51%;--c:#c8794a"></span></span><span class="bar-value">50.78</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:42%;--c:#226999"></span></span><span class="bar-value">42.45</span></div>
               </div>
@@ -611,7 +620,7 @@
             <div class="bar-row">
               <span class="bar-label">Places365</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#9db1c5"></span></span><span class="bar-value">34.46</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#9db1c5"></span></span><span class="bar-value">34.46</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#c8794a"></span></span><span class="bar-value">33.76</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:30%;--c:#226999"></span></span><span class="bar-value">29.97</span></div>
               </div>
@@ -619,7 +628,7 @@
             <div class="bar-row">
               <span class="bar-label">Aircraft</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:8%;--c:#9db1c5"></span></span><span class="bar-value">8.10</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:8%;--c:#9db1c5"></span></span><span class="bar-value">8.10</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:11%;--c:#c8794a"></span></span><span class="bar-value">10.62</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:8%;--c:#226999"></span></span><span class="bar-value">7.65</span></div>
               </div>
@@ -627,7 +636,7 @@
             <div class="bar-row">
               <span class="bar-label">Pets</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:69%;--c:#9db1c5"></span></span><span class="bar-value">68.98</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:69%;--c:#9db1c5"></span></span><span class="bar-value">68.98</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:77%;--c:#c8794a"></span></span><span class="bar-value">77.27</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:60%;--c:#226999"></span></span><span class="bar-value">59.63</span></div>
               </div>
@@ -642,7 +651,7 @@
         <div class="chart-card" id="linearProbeChart">
           <h4>Linear probing <span style="color:#9aa3ab; font-weight:400;">(0-100% accuracy)</span></h4>
           <div class="chart-legend">
-            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>CLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
           </div>
@@ -650,7 +659,7 @@
             <div class="bar-row">
               <span class="bar-label">ImageNet</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#9db1c5"></span></span><span class="bar-value">65.75</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#9db1c5"></span></span><span class="bar-value">65.75</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#c8794a"></span></span><span class="bar-value">66.34</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:65%;--c:#226999"></span></span><span class="bar-value">65.42</span></div>
               </div>
@@ -658,7 +667,7 @@
             <div class="bar-row">
               <span class="bar-label">Places365</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:37%;--c:#9db1c5"></span></span><span class="bar-value">37.11</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:37%;--c:#9db1c5"></span></span><span class="bar-value">37.11</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:37%;--c:#c8794a"></span></span><span class="bar-value">36.81</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:36%;--c:#226999"></span></span><span class="bar-value">36.07</span></div>
               </div>
@@ -666,7 +675,7 @@
             <div class="bar-row">
               <span class="bar-label">Aircraft</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:44%;--c:#9db1c5"></span></span><span class="bar-value">44.10</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:44%;--c:#9db1c5"></span></span><span class="bar-value">44.10</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:47%;--c:#c8794a"></span></span><span class="bar-value">47.46</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:46%;--c:#226999"></span></span><span class="bar-value">46.38</span></div>
               </div>
@@ -674,7 +683,7 @@
             <div class="bar-row">
               <span class="bar-label">Pets</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#9db1c5"></span></span><span class="bar-value">82.86</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#9db1c5"></span></span><span class="bar-value">82.86</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#c8794a"></span></span><span class="bar-value">82.64</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:81%;--c:#226999"></span></span><span class="bar-value">81.28</span></div>
               </div>
@@ -701,7 +710,7 @@
       <div class="chart-card delta-chart">
         <h4>Accuracy drop under background shift <span style="color:#9aa3ab; font-weight:400;">(0-20 pts, lower is better)</span></h4>
         <div class="chart-legend">
-          <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+          <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>CLIP</span>
           <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
           <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
         </div>
@@ -709,7 +718,7 @@
           <div class="bar-row">
             <span class="bar-label">Mixed-Same</span>
             <div class="bar-stack">
-              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:33%;--c:#9db1c5"></span></span><span class="bar-value">6.57</span></div>
+              <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:33%;--c:#9db1c5"></span></span><span class="bar-value">6.57</span></div>
               <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:35%;--c:#c8794a"></span></span><span class="bar-value">7.03</span></div>
               <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:30%;--c:#226999"></span></span><span class="bar-value">5.95</span></div>
             </div>
@@ -717,14 +726,14 @@
           <div class="bar-row">
             <span class="bar-label">Mixed-Rand</span>
             <div class="bar-stack">
-              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:93%;--c:#9db1c5"></span></span><span class="bar-value">18.67</span></div>
+              <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:93%;--c:#9db1c5"></span></span><span class="bar-value">18.67</span></div>
               <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:90%;--c:#c8794a"></span></span><span class="bar-value">18.09</span></div>
               <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:86%;--c:#226999"></span></span><span class="bar-value">17.21</span></div>
             </div>
           </div>
         </div>
         <p class="result-note">
-          From Original to Mixed-Same, LeVLJEPA drops 5.95 points, compared with 6.57 for InfoNCE and 7.03 for
+          From Original to Mixed-Same, LeVLJEPA drops 5.95 points, compared with 6.57 for CLIP and 7.03 for
           SigLIP. Under Mixed-Rand, it again has the smallest drop.
         </p>
       </div>
@@ -736,7 +745,7 @@
       <div class="chart-card" id="segmentationBarsChart">
         <h4>Linear segmentation on frozen patch tokens <span style="color:#9aa3ab; font-weight:400;">(0-35 mIoU)</span></h4>
         <div class="chart-legend">
-          <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+          <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>CLIP</span>
           <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
           <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
         </div>
@@ -744,7 +753,7 @@
           <div class="bar-row">
             <span class="bar-label">ADE20K</span>
             <div class="bar-stack">
-              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:60%;--c:#9db1c5"></span></span><span class="bar-value">20.90</span></div>
+              <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:60%;--c:#9db1c5"></span></span><span class="bar-value">20.90</span></div>
               <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:55%;--c:#c8794a"></span></span><span class="bar-value">19.24</span></div>
               <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:66%;--c:#226999"></span></span><span class="bar-value">23.15</span></div>
             </div>
@@ -752,7 +761,7 @@
           <div class="bar-row">
             <span class="bar-label">COCO-Stuff</span>
             <div class="bar-stack">
-              <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#9db1c5"></span></span><span class="bar-value">29.02</span></div>
+              <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#9db1c5"></span></span><span class="bar-value">29.02</span></div>
               <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:83%;--c:#c8794a"></span></span><span class="bar-value">28.88</span></div>
               <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:89%;--c:#226999"></span></span><span class="bar-value">31.10</span></div>
             </div>
@@ -796,7 +805,7 @@
         <div class="chart-card">
           <h4>Llama-1B <span style="color:#9aa3ab; font-weight:400;">(gain over random, 0-25 pts)</span></h4>
           <div class="chart-legend">
-            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>CLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
           </div>
@@ -804,7 +813,7 @@
             <div class="bar-row">
               <span class="bar-label">GQA</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:25%;--c:#9db1c5"></span></span><span class="bar-value">+6.3</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:25%;--c:#9db1c5"></span></span><span class="bar-value">+6.3</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:24%;--c:#c8794a"></span></span><span class="bar-value">+6.0</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:33%;--c:#226999"></span></span><span class="bar-value">+8.2</span></div>
               </div>
@@ -812,7 +821,7 @@
             <div class="bar-row">
               <span class="bar-label">VQAv2</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#9db1c5"></span></span><span class="bar-value">+8.4</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:34%;--c:#9db1c5"></span></span><span class="bar-value">+8.4</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:24%;--c:#c8794a"></span></span><span class="bar-value">+6.0</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:44%;--c:#226999"></span></span><span class="bar-value">+11.0</span></div>
               </div>
@@ -820,7 +829,7 @@
             <div class="bar-row">
               <span class="bar-label">POPE</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:65%;--c:#9db1c5"></span></span><span class="bar-value">+16.2</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:65%;--c:#9db1c5"></span></span><span class="bar-value">+16.2</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:50%;--c:#c8794a"></span></span><span class="bar-value">+12.4</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:69%;--c:#226999"></span></span><span class="bar-value">+17.3</span></div>
               </div>
@@ -830,7 +839,7 @@
         <div class="chart-card">
           <h4>Qwen-1.5B <span style="color:#9aa3ab; font-weight:400;">(gain over random, 0-25 pts)</span></h4>
           <div class="chart-legend">
-            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>InfoNCE</span>
+            <span class="legend-item"><span class="swatch" style="--c:#9db1c5"></span>CLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#c8794a"></span>SigLIP</span>
             <span class="legend-item"><span class="swatch" style="--c:#226999"></span>LeVLJEPA</span>
           </div>
@@ -838,7 +847,7 @@
             <div class="bar-row">
               <span class="bar-label">GQA</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:21%;--c:#9db1c5"></span></span><span class="bar-value">+5.2</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:21%;--c:#9db1c5"></span></span><span class="bar-value">+5.2</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:18%;--c:#c8794a"></span></span><span class="bar-value">+4.6</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:27%;--c:#226999"></span></span><span class="bar-value">+6.7</span></div>
               </div>
@@ -846,7 +855,7 @@
             <div class="bar-row">
               <span class="bar-label">VQAv2</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:23%;--c:#9db1c5"></span></span><span class="bar-value">+5.8</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:23%;--c:#9db1c5"></span></span><span class="bar-value">+5.8</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:16%;--c:#c8794a"></span></span><span class="bar-value">+4.1</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:42%;--c:#226999"></span></span><span class="bar-value">+10.5</span></div>
               </div>
@@ -854,7 +863,7 @@
             <div class="bar-row">
               <span class="bar-label">POPE</span>
               <div class="bar-stack">
-                <div class="bar"><span class="bar-name">InfoNCE</span><span class="bar-track"><span class="bar-fill" style="--w:76%;--c:#9db1c5"></span></span><span class="bar-value">+19.1</span></div>
+                <div class="bar"><span class="bar-name">CLIP</span><span class="bar-track"><span class="bar-fill" style="--w:76%;--c:#9db1c5"></span></span><span class="bar-value">+19.1</span></div>
                 <div class="bar"><span class="bar-name">SigLIP</span><span class="bar-track"><span class="bar-fill" style="--w:72%;--c:#c8794a"></span></span><span class="bar-value">+18.0</span></div>
                 <div class="bar lev"><span class="bar-name">LeVLJEPA</span><span class="bar-track"><span class="bar-fill" style="--w:90%;--c:#226999"></span></span><span class="bar-value">+22.6</span></div>
               </div>
@@ -1458,6 +1467,139 @@
     if(!exportLocked) transfer.render(u);
   }
   requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+/* =================================================================
+   Vertical grouped bar charts, rendered in-place from the existing
+   .bar-group markup so the numbers stay a single source of truth.
+   ================================================================= */
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  // soft pastel palette, keyed by series name (keeps CLIP / SigLIP / LeVLJEPA identity)
+  const PALETTE = { CLIP: "#e28d84", SigLIP: "#f0cf83", LeVLJEPA: "#6ea9cf" };
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // ~5-7 evenly spaced "nice" ticks from 0 up to (at least) max.
+  function niceTicks(max) {
+    const cands = [1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 500];
+    const step = cands.find(s => max / s <= 7) || max / 5;
+    const ticks = [];
+    for (let v = 0; v <= max + 1e-6; v += step) ticks.push(Math.round(v * 100) / 100);
+    if (ticks[ticks.length - 1] < max - 1e-6) ticks.push(max);
+    return ticks;
+  }
+
+  function readGroups(group) {
+    return [...group.querySelectorAll(".bar-row")].map(row => {
+      const label = row.querySelector(".bar-label").textContent.trim();
+      const bars = [...row.querySelectorAll(".bar")].map(bar => {
+        const name = bar.querySelector(".bar-name").textContent.trim();
+        const valText = bar.querySelector(".bar-value").textContent.trim();
+        const style = bar.querySelector(".bar-fill").getAttribute("style") || "";
+        const cm = style.match(/--c:\s*([^;]+)/);
+        return {
+          valText,
+          value: parseFloat(valText.replace(/[^0-9.\-]/g, "")),
+          color: PALETTE[name] || (cm ? cm[1].trim() : "#999"),
+          emph: bar.classList.contains("lev")
+        };
+      });
+      return { label, bars };
+    });
+  }
+
+  // top-rounded bar
+  function barPath(x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h));
+    return `M${x},${y + h} L${x},${y + r} Q${x},${y} ${x + r},${y} `
+         + `L${x + w - r},${y} Q${x + w},${y} ${x + w},${y + r} L${x + w},${y + h} Z`;
+  }
+
+  function render(group) {
+    const data = readGroups(group);
+    if (!data.length) return;
+
+    // y-axis maximum: prefer the "0-N" hint in the card heading, else derive.
+    const card = group.closest(".chart-card");
+    const h4 = card && card.querySelector("h4");
+    let yMax = null;
+    if (h4) {
+      const m = h4.textContent.match(/0\s*[-–]\s*(\d+(?:\.\d+)?)/);
+      if (m) yMax = parseFloat(m[1]);
+    }
+    if (!yMax) yMax = Math.max(...data.flatMap(g => g.bars.map(b => b.value))) * 1.12;
+
+    const ticks = niceTicks(yMax);
+    const top = ticks[ticks.length - 1];
+
+    const W = 460, H = 300, mL = 38, mR = 14, mT = 24, mB = 34;
+    const x0 = mL, x1 = W - mR, y0 = mT, y1 = H - mB;
+    const plotW = x1 - x0, plotH = y1 - y0;
+    const yPix = v => y1 - (v / top) * plotH;
+
+    const svg = el("svg", {
+      viewBox: `0 0 ${W} ${H}`, class: "bar-chart-svg",
+      preserveAspectRatio: "xMidYMid meet", role: "img"
+    });
+
+    ticks.forEach(t => {
+      const y = yPix(t);
+      el("line", { x1: x0, y1: y, x2: x1, y2: y, class: "bc-grid" }, svg);
+      const txt = el("text", { x: x0 - 6, y: y + 3, class: "bc-tick", "text-anchor": "end" }, svg);
+      txt.textContent = String(t);
+    });
+    el("line", { x1: x0, y1: y0, x2: x0, y2: y1, class: "bc-axis" }, svg);
+    el("line", { x1: x0, y1: y1, x2: x1, y2: y1, class: "bc-axis" }, svg);
+
+    const nG = data.length, groupW = plotW / nG;
+    const slot = (groupW * 0.74) / data[0].bars.length;
+    // shrink value labels so they never collide in dense (many-bar) charts
+    const maxLen = Math.max(...data.flatMap(g => g.bars.map(b => b.valText.length)));
+    const valFS = Math.max(7, Math.min(9.5, (slot * 0.98) / (maxLen * 0.62)));
+    data.forEach((g, gi) => {
+      const gx = x0 + gi * groupW;
+      const nS = g.bars.length;
+      const band = groupW * 0.74, bStart = gx + (groupW - band) / 2;
+      const barW = Math.min(slot * 0.82, 46);
+      g.bars.forEach((b, bi) => {
+        const cx = bStart + bi * slot + slot / 2;
+        const by = yPix(b.value), bh = y1 - by;
+        const pathAttrs = { d: barPath(cx - barW / 2, by, barW, bh, 3), fill: b.color };
+        if (b.emph) { pathAttrs.stroke = "#2f6f96"; pathAttrs["stroke-width"] = 1.4; }
+        el("path", pathAttrs, svg);
+        const vt = el("text", {
+          x: cx, y: Math.max(y0 - 6, by - 4),
+          class: "bc-value" + (b.emph ? " emph" : ""), "text-anchor": "middle",
+          style: `font-size:${valFS.toFixed(2)}px`
+        }, svg);
+        vt.textContent = b.valText;
+      });
+      const gl = el("text", { x: gx + groupW / 2, y: y1 + 15, class: "bc-glabel", "text-anchor": "middle" }, svg);
+      gl.textContent = g.label;
+    });
+
+    group.style.display = "none";
+    group.parentNode.insertBefore(svg, group);
+  }
+
+  function recolorLegends() {
+    document.querySelectorAll(".chart-legend .legend-item").forEach(item => {
+      const c = PALETTE[item.textContent.trim()];
+      const sw = item.querySelector(".swatch");
+      if (c && sw) sw.style.setProperty("--c", c);
+    });
+  }
+
+  function init() { recolorLegends(); document.querySelectorAll(".bar-group").forEach(render); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();
 </script>
 </body>

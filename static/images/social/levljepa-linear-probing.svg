@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}</style>
+  <rect x="0" y="0" width="1200" height="720" fill="#ffffff"/>
+  <text x="64" y="92" font-size="46" fill="#1e2830" font-weight="800">Linear probing</text>
+  <text x="66" y="130" font-size="24" fill="#6b7178" font-weight="500">Accuracy (%)</text>
+  <rect x="754.2" y="167" width="22" height="22" rx="5" fill="#e28d84"/>
+  <text x="786.2" y="185.92" font-size="22" fill="#3a4149" font-weight="500">CLIP</text>
+  <rect x="865.5" y="167" width="22" height="22" rx="5" fill="#f0cf83"/>
+  <text x="897.5" y="185.92" font-size="22" fill="#3a4149" font-weight="500">SigLIP</text>
+  <rect x="1001.4" y="167" width="22" height="22" rx="5" fill="#6ea9cf" stroke="#2f6f96" stroke-width="1.6"/>
+  <text x="1033.4" y="185.92" font-size="22" fill="#3a4149" font-weight="700">LeVLJEPA</text>
+  <line x1="132" y1="624.0" x2="1132" y2="624.0" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="630.0" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">0</text>
+  <line x1="132" y1="541.2" x2="1132" y2="541.2" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="547.2" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">20</text>
+  <line x1="132" y1="458.4" x2="1132" y2="458.4" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="464.4" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">40</text>
+  <line x1="132" y1="375.6" x2="1132" y2="375.6" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="381.6" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">60</text>
+  <line x1="132" y1="292.8" x2="1132" y2="292.8" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="298.8" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">80</text>
+  <line x1="132" y1="210.0" x2="1132" y2="210.0" stroke="#eef0f2" stroke-width="1.4"/>
+  <text x="118" y="216.0" font-size="20" fill="#9aa3ab" text-anchor="end" font-family="'IBM Plex Mono',monospace">100</text>
+  <line x1="132" y1="210" x2="132" y2="624" stroke="#cdd2d7" stroke-width="1.6"/>
+  <line x1="132" y1="624" x2="1132" y2="624" stroke="#cdd2d7" stroke-width="1.6"/>
+  <path d="M177.10000000000002,624 L177.10000000000002,355.795 Q177.10000000000002,351.795 181.10000000000002,351.795 L219.5666666666667,351.795 Q223.5666666666667,351.795 223.5666666666667,355.795 L223.5666666666667,624 Z" fill="#e28d84"/>
+  <text x="200.3" y="343.8" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">65.75</text>
+  <path d="M233.76666666666668,624 L233.76666666666668,353.3524 Q233.76666666666668,349.3524 237.76666666666668,349.3524 L276.23333333333335,349.3524 Q280.23333333333335,349.3524 280.23333333333335,353.3524 L280.23333333333335,624 Z" fill="#f0cf83"/>
+  <text x="257.0" y="341.4" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">66.34</text>
+  <path d="M290.4333333333333,624 L290.4333333333333,357.1612 Q290.4333333333333,353.1612 294.4333333333333,353.1612 L332.8999999999999,353.1612 Q336.8999999999999,353.1612 336.8999999999999,357.1612 L336.8999999999999,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="313.7" y="345.2" font-size="17.0" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">65.42</text>
+  <text x="257.0" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">ImageNet</text>
+  <path d="M427.09999999999997,624 L427.09999999999997,474.3646 Q427.09999999999997,470.3646 431.09999999999997,470.3646 L469.5666666666666,470.3646 Q473.5666666666666,470.3646 473.5666666666666,474.3646 L473.5666666666666,624 Z" fill="#e28d84"/>
+  <text x="450.3" y="462.4" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">37.11</text>
+  <path d="M483.76666666666665,624 L483.76666666666665,475.60659999999996 Q483.76666666666665,471.60659999999996 487.76666666666665,471.60659999999996 L526.2333333333333,471.60659999999996 Q530.2333333333333,471.60659999999996 530.2333333333333,475.60659999999996 L530.2333333333333,624 Z" fill="#f0cf83"/>
+  <text x="507.0" y="463.6" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">36.81</text>
+  <path d="M540.4333333333334,624 L540.4333333333334,478.6702 Q540.4333333333334,474.6702 544.4333333333334,474.6702 L582.9000000000001,474.6702 Q586.9000000000001,474.6702 586.9000000000001,478.6702 L586.9000000000001,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="563.7" y="466.7" font-size="17.0" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">36.07</text>
+  <text x="507.0" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">Places365</text>
+  <path d="M677.1,624 L677.1,445.426 Q677.1,441.426 681.1,441.426 L719.5666666666667,441.426 Q723.5666666666667,441.426 723.5666666666667,445.426 L723.5666666666667,624 Z" fill="#e28d84"/>
+  <text x="700.3" y="433.4" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">44.10</text>
+  <path d="M733.7666666666667,624 L733.7666666666667,431.51559999999995 Q733.7666666666667,427.51559999999995 737.7666666666667,427.51559999999995 L776.2333333333333,427.51559999999995 Q780.2333333333333,427.51559999999995 780.2333333333333,431.51559999999995 L780.2333333333333,624 Z" fill="#f0cf83"/>
+  <text x="757.0" y="419.5" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">47.46</text>
+  <path d="M790.4333333333334,624 L790.4333333333334,435.9868 Q790.4333333333334,431.9868 794.4333333333334,431.9868 L832.9000000000001,431.9868 Q836.9000000000001,431.9868 836.9000000000001,435.9868 L836.9000000000001,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="813.7" y="424.0" font-size="17.0" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">46.38</text>
+  <text x="757.0" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">Aircraft</text>
+  <path d="M927.1,624 L927.1,284.9596 Q927.1,280.9596 931.1,280.9596 L969.5666666666667,280.9596 Q973.5666666666667,280.9596 973.5666666666667,284.9596 L973.5666666666667,624 Z" fill="#e28d84"/>
+  <text x="950.3" y="273.0" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">82.86</text>
+  <path d="M983.7666666666667,624 L983.7666666666667,285.8704 Q983.7666666666667,281.8704 987.7666666666667,281.8704 L1026.2333333333333,281.8704 Q1030.2333333333333,281.8704 1030.2333333333333,285.8704 L1030.2333333333333,624 Z" fill="#f0cf83"/>
+  <text x="1007.0" y="273.9" font-size="17.0" fill="#6b7178" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',monospace">82.64</text>
+  <path d="M1040.4333333333332,624 L1040.4333333333332,291.5008 Q1040.4333333333332,287.5008 1044.4333333333332,287.5008 L1082.8999999999999,287.5008 Q1086.8999999999999,287.5008 1086.8999999999999,291.5008 L1086.8999999999999,624 Z" fill="#6ea9cf" stroke="#2f6f96" stroke-width="2"/>
+  <text x="1063.7" y="279.5" font-size="17.0" fill="#1e3647" font-weight="700" text-anchor="middle" font-family="'IBM Plex Mono',monospace">81.28</text>
+  <text x="1007.0" y="658.0" font-size="24" fill="#444" font-weight="500" text-anchor="middle">Pets</text>
+</svg>
